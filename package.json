@@ -1,0 +1,20 @@
+{
+  "name": "xlsatu-fiber-broadband",
+  "version": "1.0.0",
+  "description": "Website Resmi XL Satu Fiber & Home Broadband - Landing Page & CMS Admin",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx -y serve . -p 3000",
+    "dev": "npx -y serve . -p 3000",
+    "serve": "npx -y serve ."
+  },
+  "keywords": [
+    "xl-satu",
+    "fiber",
+    "broadband",
+    "landing-page",
+    "cms"
+  ],
+  "author": "arif soft 082113842783",
+  "license": "ISC"
+}

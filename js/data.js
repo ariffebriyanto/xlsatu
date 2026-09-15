@@ -1,0 +1,754 @@
+/**
+ * XL Satu - CMS Data Store & State Management (V2 Luxury Edition)
+ * Berisi seluruh data resmi dari 6 flyer gambar di folder iwan:
+ * - Customer Care 820, Non-XL 08170123442, WA Care 08170010820
+ * - Sales Representative: ONES 085755836988
+ * - Area Jangkauan: Surabaya, Sidoarjo, Gresik
+ * - Paket Kabel FTTH, Tanpa Kabel Wireless, dan Promo 4 Bulan Langsung
+ * - Penghargaan Ookla Speedtest #1 Jaringan Terbaik & Tercepat
+ * - Didukung oleh: arif soft 082113842783
+ */
+
+const STORAGE_KEY = 'xlsatu_site_data_v2';
+
+const DEFAULT_SITE_DATA = {
+    settings: {
+        siteTitle: "XL Satu Fiber & Home Broadband - Wifi Rumah Terbaik, Cepat, Murah & Amanah",
+        siteTagline: "Wifi Rumah Terbaik Mulai Rp 180 Ribuan | Jaringan #1 Di Indonesia",
+        brandName: "XL SATU",
+        coverageArea: "Surabaya, Sidoarjo, Gresik & Seluruh Indonesia",
+        supportedBy: "arif soft 082113842783",
+        supportedPhone: "082113842783",
+        supportedWhatsapp: "6282113842783",
+        copyrightYear: 2026
+    },
+    salesRep: {
+        name: "ONES",
+        role: "Official Sales Representative XL Satu",
+        phone: "085755836988",
+        phoneRaw: "6285755836988",
+        messageText: "Halo Mas ONES, saya ingin konsultasi dan daftar pasang XL Satu",
+        badge: "Pendaftaran Cukup 5 Menit dengan E-KYC"
+    },
+    customerCare: {
+        title: "Media Customer Care Resmi XL Satu",
+        subtitle: "Layanan bantuan pelanggan dan pengaduan resmi 24 jam setiap hari",
+        xlUserPhone: "820",
+        xlUserLabel: "Khusus Pengguna Kartu XL (Bebas Pulsa/Tarif Lokal)",
+        nonXlPhone: "0817 0123 442",
+        nonXlLabel: "Pengguna Non-XL & Telepon Rumah",
+        whatsapp: "0817 0010 820",
+        whatsappRaw: "628170010820",
+        whatsappLabel: "Chat WhatsApp Resmi Customer Care 24 Jam",
+        email: "xlsatucs@xlsmart.co.id",
+        emailLabel: "Email Resmi Dukungan Pelanggan",
+        workingHours: "24 Jam Non-Stop (Senin - Minggu)"
+    },
+    hero: {
+        badge: "👑 JARINGAN #1 DI INDONESIA • TERCEPAT, TERLUAS, TERBAIK",
+        title: "Wifi Rumah Terbaik, Murah, Cepat & Amanah",
+        subtitle: "Solusi internet fiber optik dan broadband tanpa kabel terlengkap di Surabaya, Sidoarjo, & Gresik. Pendaftaran ga ribet, cukup 5 menit dengan E-KYC!",
+        startingPrice: "Mulai Rp 180 rban",
+        ctaPrimaryText: "Daftar Cepat via WhatsApp",
+        ctaSecondaryText: "Lihat Brosur & Paket",
+        promoNote: "✓ Bebas Biaya Pasang*  ✓ Gratis Sewa Alat Router  ✓ Bonus Vidio & Catchplay+ 3 Bulan"
+    },
+    // Galeri Brosur & Flyer Lengkap dari folder iwan
+    brochures: [
+        {
+            id: "brochure-1",
+            title: "Wifi Rumah Terbaik Mulai 180rb",
+            tag: "Hero Promo",
+            image: "assets/images/hero-wifi-terbaik.jpeg",
+            desc: "Brosur utama paket kabel & tanpa kabel, pendaftaran 5 menit via E-KYC, Sales ONES 085755836988."
+        },
+        {
+            id: "brochure-2",
+            title: "Promo Hemat Bayar 4 Bulan Langsung",
+            tag: "Special Promo",
+            image: "assets/images/promo-4bulan-unlimited.jpeg",
+            desc: "Speed up to 50 Mbps Rp 721.500 & 100 Mbps Rp 876.900 (termasuk PPN) + Bonus OTT 3 Bulan."
+        },
+        {
+            id: "brochure-3",
+            title: "Daftar Paket Kabel FTTH Surabaya-Sidoarjo-Gresik",
+            tag: "Paket FTTH",
+            image: "assets/images/daftar-paket-surabaya.jpeg",
+            desc: "Paket lengkap Spark 100 hingga Spark Extrem 1 Gbps, plus paket hemat Basic Starter 20 Mbps."
+        },
+        {
+            id: "brochure-4",
+            title: "Wifi Rumah Tanpa Kabel (Home Broadband)",
+            tag: "Wireless Router",
+            image: "assets/images/wifi-tanpa-kabel.jpeg",
+            desc: "Broadband tanpa kabel dengan router multi-antena, harga tetap & terjangkau garansi tidak berubah."
+        },
+        {
+            id: "brochure-5",
+            title: "Media Customer Care Resmi XL Satu",
+            tag: "Official Support",
+            image: "assets/images/customer-care-xlsatu.jpeg",
+            desc: "Flyer resmi kontak CS: 820 (XL), 0817 0123 442 (Non-XL), WA 0817 0010 820, Email xlsatucs."
+        },
+        {
+            id: "brochure-6",
+            title: "Penghargaan Jaringan #1 Ookla Speedtest",
+            tag: "Award & Prestise",
+            image: "assets/images/xl-ultra-5g-award.jpeg",
+            desc: "XL Ultra 5G+: Jaringan Terbaik, 5G Terbaik, dan 5G Tercepat versi Ookla Speedtest."
+        }
+    ],
+    // Paket Internet Lengkap Sesuai Data Flyer (Bisa Tambah, Edit, Hapus)
+    packages: [
+        // KATEGORI 1: PROMO BAYAR 4 BULAN LANGSUNG
+        {
+            id: "pkg-promo-50",
+            category: "promo4bln",
+            name: "PROMO 4 BULAN 50 Mbps",
+            speed: "50 Mbps Unlimited",
+            price: "Rp 721.500",
+            period: "untuk 4 bulan langsung",
+            monthlyEquivalent: "Setara Rp 180.000 / bln",
+            nextMonthPrice: "Bulan ke-5 dst: Rp 222.000 / bln",
+            quotaHp: "Termasuk PPN 11%",
+            familyMembers: "Instalasi Kabel / Tanpa Kabel",
+            badge: "🔥 Super Hemat Bayar 4 Bulan",
+            isPopular: true,
+            features: [
+                "Kecepatan Up to 50 Mbps Unlimited",
+                "Tanpa Kuota FUP Menurun",
+                "GRATIS Biaya Pemasangan",
+                "GRATIS Sewa Perangkat Router",
+                "BONUS OTT: Gratis 3 Bulan Vidio Lite & CATCHPLAY+",
+                "Minimal Berlangganan 12 Bulan"
+            ],
+            ctaText: "Ambil Promo 50 Mbps"
+        },
+        {
+            id: "pkg-promo-100",
+            category: "promo4bln",
+            name: "PROMO 4 BULAN 100 Mbps",
+            speed: "100 Mbps Unlimited",
+            price: "Rp 876.900",
+            period: "untuk 4 bulan langsung",
+            monthlyEquivalent: "Setara Rp 219.000 / bln",
+            nextMonthPrice: "Bulan ke-5 dst: Rp 243.090 / bln",
+            quotaHp: "Termasuk PPN 11%",
+            familyMembers: "Instalasi Kabel / Tanpa Kabel",
+            badge: "⚡ Best Value & Speed",
+            isPopular: true,
+            features: [
+                "Kecepatan Up to 100 Mbps Unlimited",
+                "Tanpa Kuota FUP Menurun",
+                "GRATIS Biaya Pemasangan",
+                "GRATIS Sewa Perangkat Router",
+                "BONUS OTT: Gratis 3 Bulan Vidio Lite & CATCHPLAY+",
+                "Minimal Berlangganan 12 Bulan"
+            ],
+            ctaText: "Ambil Promo 100 Mbps"
+        },
+
+        // KATEGORI 2: PAKET FTTH (KABEL FIBER OPTIK) SURABAYA - SIDOARJO - GRESIK
+        {
+            id: "pkg-basic-starter",
+            category: "ftth",
+            name: "BASIC STARTER",
+            speed: "20 Mbps",
+            price: "Rp 232.000",
+            period: "/bulan",
+            monthlyEquivalent: "Biaya Pasang 111rb",
+            nextMonthPrice: "",
+            quotaHp: "Bonus Kuota Bersama XL 8 GB/bln",
+            familyMembers: "Gratis 2 Kartu Perdana XL",
+            badge: "Paket Ekonomis",
+            isPopular: false,
+            features: [
+                "Kecepatan Fiber 20 Mbps",
+                "Bonus Kuota Bersama XL 8 GB/bln",
+                "Gratis 2 Kartu Perdana XL",
+                "Internet Rumah + Kuota Seluler",
+                "Layanan Siaga 24 Jam"
+            ],
+            ctaText: "Pilih Basic Starter"
+        },
+        {
+            id: "pkg-spark-starter",
+            category: "ftth",
+            name: "SPARK STARTER",
+            speed: "20 Mbps",
+            price: "Rp 205.000",
+            period: "/bulan",
+            monthlyEquivalent: "Biaya Pasang 111rb",
+            nextMonthPrice: "",
+            quotaHp: "Internet Only",
+            familyMembers: "Paket Mandiri",
+            badge: "Harga Paling Terjangkau",
+            isPopular: false,
+            features: [
+                "Kecepatan Fiber 20 Mbps",
+                "Unlimited Tanpa FUP",
+                "Koneksi Stabil Kabel Fiber",
+                "Termasuk Sewa Router Wi-Fi",
+                "Customer Care 24 Jam"
+            ],
+            ctaText: "Pilih Spark Starter"
+        },
+        {
+            id: "pkg-spark-100",
+            category: "ftth",
+            name: "SPARK 100",
+            speed: "Up to 250 Mbps",
+            price: "Rp 254.000",
+            period: "/bulan",
+            monthlyEquivalent: "Internet Only",
+            nextMonthPrice: "",
+            quotaHp: "Speed Booster 250 Mbps",
+            familyMembers: "Keluarga Digital",
+            badge: "Kecepatan Tinggi",
+            isPopular: false,
+            features: [
+                "Speed Up to 250 Mbps",
+                "100% True Fiber Optic",
+                "Unlimited Tanpa FUP",
+                "Cocok untuk Streaming HD & WFH",
+                "Termasuk Router Wi-Fi Fiber"
+            ],
+            ctaText: "Pilih Spark 100"
+        },
+        {
+            id: "pkg-spark-150",
+            category: "ftth",
+            name: "SPARK 150",
+            speed: "Up to 350 Mbps",
+            price: "Rp 309.000",
+            period: "/bulan",
+            monthlyEquivalent: "Internet Only",
+            nextMonthPrice: "",
+            quotaHp: "Speed Booster 350 Mbps",
+            familyMembers: "Pilihan Utama Keluarga",
+            badge: "⭐ FAVORIT KELUARGA",
+            isPopular: true,
+            features: [
+                "Speed Up to 350 Mbps",
+                "Paket Paling Diminati Pelanggan",
+                "Anti-lag Gaming & Streaming 4K",
+                "Unlimited Kuota Tanpa Penurunan Kecepatan",
+                "Dukungan Teknisi Prioritas"
+            ],
+            ctaText: "Pilih Spark 150 (Favorit)"
+        },
+        {
+            id: "pkg-spark-300",
+            category: "ftth",
+            name: "SPARK 300",
+            speed: "Up to 400 Mbps",
+            price: "Rp 332.000",
+            period: "/bulan",
+            monthlyEquivalent: "Internet Only",
+            nextMonthPrice: "",
+            quotaHp: "Speed Booster 400 Mbps",
+            familyMembers: "Multi-Device Rumah Mewah",
+            badge: "Super Fast",
+            isPopular: false,
+            features: [
+                "Speed Up to 400 Mbps",
+                "Mampu Tangani Puluhan Gadget Sekaligus",
+                "Upload & Download Simetris Cepat",
+                "Sangat Cocok untuk Rumah Bertingkat",
+                "Router Wi-Fi Dual Band"
+            ],
+            ctaText: "Pilih Spark 300"
+        },
+        {
+            id: "pkg-spark-ultra",
+            category: "ftth",
+            name: "SPARK ULTRA",
+            speed: "Up to 600 Mbps",
+            price: "Rp 555.000",
+            period: "/bulan",
+            monthlyEquivalent: "Internet Only",
+            nextMonthPrice: "",
+            quotaHp: "Speed Booster 600 Mbps",
+            familyMembers: "Rumah & Content Creator",
+            badge: "Ultra Fast Performance",
+            isPopular: false,
+            features: [
+                "Speed Up to 600 Mbps",
+                "Cocok untuk Content Creator & Live Streaming",
+                "Ping Ultra Rendah untuk E-Sports",
+                "Instalasi Jalur Khusus Fiber",
+                "Customer Care VIP 24/7"
+            ],
+            ctaText: "Pilih Spark Ultra"
+        },
+        {
+            id: "pkg-spark-extrem",
+            category: "ftth",
+            name: "SPARK EXTREM",
+            speed: "Up to 1 Gbps (1000 Mbps)",
+            price: "Rp 999.000",
+            period: "/bulan",
+            monthlyEquivalent: "Internet Only",
+            nextMonthPrice: "",
+            quotaHp: "Speed Maksimal 1 Gbps",
+            familyMembers: "Ultimate High-End",
+            badge: "👑 1 Gbps ULTIMATE",
+            isPopular: false,
+            features: [
+                "Kecepatan Monster Hingga 1 Gbps",
+                "Performa Puncak Tanpa Hambatan",
+                "Ideal untuk Smart Home & Usaha Rumahan",
+                "VIP Dedicated Bandwidth",
+                "Prioritas Tertinggi Layanan Teknisi"
+            ],
+            ctaText: "Pilih Spark Extrem 1 Gbps"
+        },
+
+        // KATEGORI 3: WIFI TANPA KABEL (HOME BROADBAND WIRELESS)
+        {
+            id: "pkg-wireless-100-monthly",
+            category: "wireless",
+            name: "HOME BROADBAND 100 Mbps (NEW)",
+            speed: "100 Mbps",
+            price: "Rp 243.000",
+            period: "/bulan",
+            monthlyEquivalent: "Sudah Termasuk PPN",
+            nextMonthPrice: "Harga Tetap & Terjangkau",
+            quotaHp: "Tanpa Perlu Tarik Kabel",
+            familyMembers: "Tinggal Colok Listrik Langsung Nyala",
+            badge: "PRODUK BARU • WIRELESS",
+            isPopular: true,
+            features: [
+                "Kecepatan 100 Mbps Tanpa Kabel",
+                "Gratis Biaya Pasang & Sewa Alat",
+                "Bonus Vidio Lite & CATCHPLAY+ 3 Bulan",
+                "DIJAMIN HARGA TIDAK BERUBAH selama berlangganan",
+                "Sangat Praktis, Router Modern 4 Antena"
+            ],
+            ctaText: "Pilih Wireless 100 Mbps"
+        }
+    ],
+    // FAQ Komprehensif Sesuai Brosur
+    faqs: [
+        {
+            id: "faq-1",
+            question: "Bagaimana cara mendaftar pasang baru XL Satu secara cepat?",
+            answer: "Pendaftaran sangat mudah dan ga pake lama, cukup 5 menit dengan sistem E-KYC! Anda dapat langsung menghubungi Sales Representative resmi kami (ONES: 085755836988) atau klik tombol WhatsApp di website ini."
+        },
+        {
+            id: "faq-2",
+            question: "Berapa harga promo termurah untuk XL Satu?",
+            answer: "Melalui Promo Bayar 4 Bulan Langsung, Anda bisa menikmati internet kecepatan 50 Mbps seharga Rp 721.500 (setara Rp 180.000/bulan) atau 100 Mbps seharga Rp 876.900 (setara Rp 219.000/bulan) sudah termasuk PPN 11%, gratis sewa router, dan gratis biaya pasang!"
+        },
+        {
+            id: "faq-3",
+            question: "Wilayah mana saja yang sudah terjangkau jaringan ini?",
+            answer: "Saat ini jaringan kabel FTTH dan Home Broadband Wireless XL Satu telah hadir di seluruh wilayah Surabaya, Sidoarjo, Gresik, serta berbagai kota besar lainnya di Indonesia."
+        },
+        {
+            id: "faq-4",
+            question: "Apa bedanya paket Kabel (FTTH) dan Tanpa Kabel (Home Broadband)?",
+            answer: "Paket Kabel (FTTH) menggunakan sambungan kabel fiber optik langsung ke dalam rumah hingga kecepatan 1 Gbps. Sedangkan Wifi Rumah Tanpa Kabel menggunakan perangkat router wireless modern tanpa perlu penarikan kabel fisik, sangat praktis tinggal colok ke stopkontak listrik."
+        },
+        {
+            id: "faq-5",
+            question: "Bagaimana cara menghubungi Media Customer Care resmi?",
+            answer: "Sesuai flyer resmi XL Satu, Customer Care dapat dihubungi melalui: Call Center 820 (Khusus pengguna nomor XL), 0817 0123 442 (Pengguna Non-XL & Telp Rumah), WhatsApp 0817 0010 820, dan email ke xlsatucs@xlsmart.co.id (Siaga 24 Jam)."
+        },
+        {
+            id: "faq-6",
+            question: "Siapa pengembang dan pendukung sistem website ini?",
+            answer: "Website ini didukung, dirancang, dan dikembangkan secara profesional oleh Arif Soft (WhatsApp/Telepon: 082113842783)."
+        }
+    ],
+    // Autentikasi Pengelola Admin CMS (Username & Password bisa diedit di Admin)
+    auth: {
+        username: "admin",
+        password: "admin123"
+    },
+    // Kontak WhatsApp Terpadu yang bisa diedit di Admin CMS
+    whatsappContacts: {
+        sales: "085755836988",
+        registration: "085755836988",
+        customerCare: "0817 0010 820",
+        supportedDev: "082113842783"
+    },
+    // Ulasan / Testimoni Pelanggan (Review "Kata Mereka")
+    reviews: [
+        {
+            id: "rev-1",
+            name: "Budi Santoso",
+            city: "Rungkut, Surabaya",
+            packageName: "SPARK 150 (Up to 350 Mbps)",
+            rating: 5,
+            date: "12 September 2026",
+            comment: "Pasang buat kebutuhan WFH dan streaming keluarga, sinyal kencang dan stabil banget. Sales Mas ONES responsif banget, pendaftaran 5 menit langsung diproses dan besoknya teknisi langsung pasang rapi!",
+            avatar: "BS"
+        },
+        {
+            id: "rev-2",
+            name: "Ibu Dian Pratiwi",
+            city: "Waru, Sidoarjo",
+            packageName: "Promo 4 Bulan 100 Mbps",
+            rating: 5,
+            date: "08 September 2026",
+            comment: "Promo bayar 4 bulan langsung sangat hemat, jatuhnya cuma sekitar 219rb/bulan dan sudah dapat bonus Vidio Catchplay+. Internetan lancar tanpa kuota habis, anak-anak sekolah online senang.",
+            avatar: "DP"
+        },
+        {
+            id: "rev-3",
+            name: "Ahmad Faisal",
+            city: "Kebomas, Gresik",
+            packageName: "Home Broadband Wireless 100 Mbps",
+            rating: 5,
+            date: "01 September 2026",
+            comment: "Rumah saya agak jauh dari tiang fiber, langsung disolusi dengan Wifi Rumah Tanpa Kabel XL Satu. Tinggal colok listrik langsung nyala ngebut. CS dan salesnya ramah serta amanah!",
+            avatar: "AF"
+        },
+        {
+            id: "rev-4",
+            name: "dr. Hendra Gunawan",
+            city: "Kertajaya, Surabaya",
+            packageName: "SPARK 300 (Up to 400 Mbps)",
+            rating: 5,
+            date: "28 Agustus 2026",
+            comment: "Keluarga kami banyak pakai gadget sekaligus, pakai Spark 300 dari lantai 1 sampai lantai 2 lancar jaya buat zoom meeting video call dan gaming. Sangat memuaskan.",
+            avatar: "HG"
+        }
+    ],
+    // Database Formulir Pendaftaran Masuk (Leads Pendaftar)
+    registrations: [
+        {
+            id: "reg-demo-1",
+            name: "Rizky Ramadhan",
+            phone: "081234567890",
+            email: "rizky@gmail.com",
+            address: "Jl. Manyar Kertoarjo No. 15, Gubeng, Surabaya",
+            packageName: "SPARK 150 (Up to 350 Mbps)",
+            notes: "Mohon pasang router di lantai 2",
+            date: "14 September 2026 14:30",
+            status: "Baru"
+        }
+    ]
+};
+
+// Database Store Manager
+const SiteDB = {
+    getData: function() {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (raw) {
+                const parsed = JSON.parse(raw);
+                return {
+                    settings: { ...DEFAULT_SITE_DATA.settings, ...(parsed.settings || {}) },
+                    salesRep: { ...DEFAULT_SITE_DATA.salesRep, ...(parsed.salesRep || {}) },
+                    customerCare: { ...DEFAULT_SITE_DATA.customerCare, ...(parsed.customerCare || {}) },
+                    hero: { ...DEFAULT_SITE_DATA.hero, ...(parsed.hero || {}) },
+                    auth: { ...DEFAULT_SITE_DATA.auth, ...(parsed.auth || {}) },
+                    whatsappContacts: { ...DEFAULT_SITE_DATA.whatsappContacts, ...(parsed.whatsappContacts || {}) },
+                    brochures: Array.isArray(parsed.brochures) ? parsed.brochures : DEFAULT_SITE_DATA.brochures,
+                    packages: Array.isArray(parsed.packages) ? parsed.packages : DEFAULT_SITE_DATA.packages,
+                    faqs: Array.isArray(parsed.faqs) ? parsed.faqs : DEFAULT_SITE_DATA.faqs,
+                    reviews: Array.isArray(parsed.reviews) ? parsed.reviews : DEFAULT_SITE_DATA.reviews,
+                    registrations: Array.isArray(parsed.registrations) ? parsed.registrations : DEFAULT_SITE_DATA.registrations
+                };
+            }
+        } catch (e) {
+            console.error("Gagal membaca LocalStorage:", e);
+        }
+        this.saveData(DEFAULT_SITE_DATA);
+        return DEFAULT_SITE_DATA;
+    },
+
+    saveData: function(data) {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            window.dispatchEvent(new Event('xlsatu_data_updated'));
+            return true;
+        } catch (e) {
+            console.error("Gagal simpan ke LocalStorage:", e);
+            return false;
+        }
+    },
+
+    resetToDefault: function() {
+        try {
+            localStorage.removeItem(STORAGE_KEY);
+            localStorage.removeItem('xlsatu_site_data_v1');
+            this.saveData(DEFAULT_SITE_DATA);
+            window.dispatchEvent(new Event('xlsatu_data_updated'));
+            return DEFAULT_SITE_DATA;
+        } catch (e) {
+            console.error("Gagal reset:", e);
+            return null;
+        }
+    },
+
+    // CRUD: Packages
+    addPackage: function(pkg) {
+        const data = this.getData();
+        const newPkg = {
+            id: 'pkg-' + Date.now(),
+            category: pkg.category || 'ftth',
+            name: pkg.name || 'Paket Baru',
+            speed: pkg.speed || '50 Mbps',
+            price: pkg.price || 'Rp 300.000',
+            period: pkg.period || '/bulan',
+            monthlyEquivalent: pkg.monthlyEquivalent || '',
+            nextMonthPrice: pkg.nextMonthPrice || '',
+            quotaHp: pkg.quotaHp || '',
+            familyMembers: pkg.familyMembers || '',
+            badge: pkg.badge || '',
+            isPopular: !!pkg.isPopular,
+            features: Array.isArray(pkg.features) ? pkg.features : ["Koneksi Stabil", "Layanan 24/7"],
+            ctaText: pkg.ctaText || 'Pilih Paket'
+        };
+        data.packages.push(newPkg);
+        this.saveData(data);
+        return newPkg;
+    },
+
+    updatePackage: function(id, fields) {
+        const data = this.getData();
+        const index = data.packages.findIndex(p => p.id === id);
+        if (index !== -1) {
+            data.packages[index] = { ...data.packages[index], ...fields };
+            this.saveData(data);
+            return data.packages[index];
+        }
+        return null;
+    },
+
+    deletePackage: function(id) {
+        const data = this.getData();
+        const prev = data.packages.length;
+        data.packages = data.packages.filter(p => p.id !== id);
+        if (data.packages.length !== prev) {
+            this.saveData(data);
+            return true;
+        }
+        return false;
+    },
+
+    // CRUD: FAQ
+    addFaq: function(newFaq) {
+        const data = this.getData();
+        const faq = {
+            id: 'faq-' + Date.now(),
+            question: newFaq.question || 'Pertanyaan?',
+            answer: newFaq.answer || 'Jawaban.'
+        };
+        data.faqs.push(faq);
+        this.saveData(data);
+        return faq;
+    },
+
+    updateFaq: function(id, fields) {
+        const data = this.getData();
+        const index = data.faqs.findIndex(f => f.id === id);
+        if (index !== -1) {
+            data.faqs[index] = { ...data.faqs[index], ...fields };
+            this.saveData(data);
+            return data.faqs[index];
+        }
+        return null;
+    },
+
+    deleteFaq: function(id) {
+        const data = this.getData();
+        const prev = data.faqs.length;
+        data.faqs = data.faqs.filter(f => f.id !== id);
+        if (data.faqs.length !== prev) {
+            this.saveData(data);
+            return true;
+        }
+        return false;
+    },
+
+    exportJson: function() {
+        const data = this.getData();
+        const jsonStr = JSON.stringify(data, null, 2);
+        const blob = new Blob([jsonStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `xlsatu_data_backup_${new Date().toISOString().slice(0,10)}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    },
+
+    // CRUD: REVIEWS ("KATA MEREKA")
+    addReview: function(review) {
+        const data = this.getData();
+        const initials = (review.name || "Pelanggan")
+            .split(' ')
+            .map(n => n[0])
+            .slice(0, 2)
+            .join('')
+            .toUpperCase();
+
+        const newReview = {
+            id: 'rev-' + Date.now(),
+            name: review.name || 'Pelanggan XL Satu',
+            city: review.city || 'Surabaya',
+            packageName: review.packageName || 'XL Satu Fiber',
+            rating: parseInt(review.rating, 10) || 5,
+            date: review.date || new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
+            comment: review.comment || 'Layanan memuaskan dan koneksi stabil.',
+            avatar: initials || 'XL'
+        };
+        data.reviews.unshift(newReview);
+        this.saveData(data);
+        return newReview;
+    },
+
+    updateReview: function(id, fields) {
+        const data = this.getData();
+        const index = data.reviews.findIndex(r => r.id === id);
+        if (index !== -1) {
+            data.reviews[index] = { ...data.reviews[index], ...fields };
+            this.saveData(data);
+            return data.reviews[index];
+        }
+        return null;
+    },
+
+    deleteReview: function(id) {
+        const data = this.getData();
+        const prev = data.reviews.length;
+        data.reviews = data.reviews.filter(r => r.id !== id);
+        if (data.reviews.length !== prev) {
+            this.saveData(data);
+            return true;
+        }
+        return false;
+    },
+
+    // CRUD: REGISTRATIONS (PENDAFTARAN ONLINE)
+    addRegistration: function(reg) {
+        const data = this.getData();
+        const now = new Date();
+        const dateStr = now.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) + ' ' +
+                        now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+        const newReg = {
+            id: 'reg-' + Date.now(),
+            name: reg.name || '',
+            phone: reg.phone || '',
+            email: reg.email || '',
+            address: reg.address || '',
+            packageName: reg.packageName || 'Belum Ditentukan',
+            notes: reg.notes || '',
+            date: dateStr,
+            status: 'Baru'
+        };
+        data.registrations.unshift(newReg);
+        this.saveData(data);
+        return newReg;
+    },
+
+    deleteRegistration: function(id) {
+        const data = this.getData();
+        data.registrations = data.registrations.filter(r => r.id !== id);
+        this.saveData(data);
+        return true;
+    },
+
+    clearRegistrations: function() {
+        const data = this.getData();
+        data.registrations = [];
+        this.saveData(data);
+        return true;
+    },
+
+    // CRUD: BROCHURES / FLYERS INFO
+    addBrochure: function(item) {
+        const data = this.getData();
+        const newBrochure = {
+            id: 'brochure-' + Date.now(),
+            title: item.title || 'Brosur Baru',
+            tag: item.tag || 'Promo',
+            image: item.image || 'assets/images/hero-wifi-terbaik.jpeg',
+            desc: item.desc || 'Deskripsi informasi brosur.'
+        };
+        data.brochures.push(newBrochure);
+        this.saveData(data);
+        return newBrochure;
+    },
+
+    updateBrochure: function(id, fields) {
+        const data = this.getData();
+        const index = data.brochures.findIndex(b => b.id === id);
+        if (index !== -1) {
+            data.brochures[index] = { ...data.brochures[index], ...fields };
+            this.saveData(data);
+            return data.brochures[index];
+        }
+        return null;
+    },
+
+    deleteBrochure: function(id) {
+        const data = this.getData();
+        const prev = data.brochures.length;
+        data.brochures = data.brochures.filter(b => b.id !== id);
+        if (data.brochures.length !== prev) {
+            this.saveData(data);
+            return true;
+        }
+        return false;
+    },
+
+    // AUTH & CREDENTIALS MANAGEMENT
+    checkAuth: function(username, password) {
+        const data = this.getData();
+        const auth = data.auth || DEFAULT_SITE_DATA.auth;
+        return (username === auth.username && password === auth.password);
+    },
+
+    updateAuth: function(newUsername, newPassword) {
+        const data = this.getData();
+        data.auth = {
+            username: newUsername.trim(),
+            password: newPassword.trim()
+        };
+        this.saveData(data);
+        return true;
+    },
+
+    // WHATSAPP CONTACTS MANAGEMENT
+    updateWhatsappContacts: function(contacts) {
+        const data = this.getData();
+        data.whatsappContacts = {
+            ...data.whatsappContacts,
+            ...contacts
+        };
+        // Update also salesRep and customerCare to stay in perfect sync
+        if (contacts.sales) {
+            data.salesRep.phone = contacts.sales;
+            data.salesRep.phoneRaw = contacts.sales.replace(/[^0-9]/g, '');
+        }
+        if (contacts.customerCare) {
+            data.customerCare.whatsapp = contacts.customerCare;
+            data.customerCare.whatsappRaw = contacts.customerCare.replace(/[^0-9]/g, '');
+        }
+        this.saveData(data);
+        return true;
+    },
+
+    importJson: function(jsonString) {
+        try {
+            const parsed = JSON.parse(jsonString);
+            if (parsed && typeof parsed === 'object') {
+                this.saveData(parsed);
+                return { success: true };
+            }
+            return { success: false, error: "Format file JSON tidak valid." };
+        } catch (e) {
+            return { success: false, error: e.message };
+        }
+    }
+};
+
+window.SiteDB = SiteDB;
+window.DEFAULT_SITE_DATA = DEFAULT_SITE_DATA;

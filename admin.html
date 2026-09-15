@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin CMS - XL Satu Fiber & Broadband</title>
+    <link rel="icon" type="image/png" href="assets/images/hero-wifi-terbaik.jpeg">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <!-- Admin CSS -->
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+    <!-- ==========================================================================
+         ADMIN LOGIN GATE OVERLAY
+         ========================================================================== -->
+    <div class="admin-login-overlay" id="admin-login-screen">
+        <div class="admin-login-card">
+            <div class="admin-login-header">
+                <div class="logo-badge"><i class="bi bi-wordpress"></i></div>
+                <h2>XL SATU CMS ADMIN</h2>
+                <p>Masuk untuk mengelola seluruh konten, paket, info flyer & WhatsApp</p>
+            </div>
+            <div class="admin-login-body">
+                <div class="admin-login-error" id="login-error-msg">
+                    <i class="bi bi-exclamation-circle-fill"></i> Username atau password salah!
+                </div>
+                <form id="form-admin-login" onsubmit="handleAdminLogin(event)">
+                    <div class="form-group" style="margin-bottom: 16px;">
+                        <label style="display: block; margin-bottom: 6px; font-weight: 600;">Username Admin</label>
+                        <input type="text" class="form-control" id="login-username" placeholder="Masukkan username" required autofocus>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 6px; font-weight: 600;">Password Admin</label>
+                        <input type="password" class="form-control" id="login-password" placeholder="Masukkan password" required>
+                    </div>
+                    <button type="submit" class="wp-btn wp-btn-primary" style="width: 100%; padding: 12px; font-size: 15px; font-weight: 700; justify-content: center;">
+                        <i class="bi bi-box-arrow-in-right"></i> Masuk ke Dashboard CMS
+                    </button>
+                </form>
+            </div>
+            <div class="admin-login-footer-hint">
+                Default Akun: <strong>admin</strong> | Password: <strong>admin123</strong><br>
+                (Dapat diubah pada menu Akun & Password)
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================================================
+         SIDEBAR (WORDPRESS STYLE)
+         ========================================================================== -->
+    <aside class="admin-sidebar" id="admin-sidebar">
+        <div class="admin-sidebar-header">
+            <div class="wp-logo-circle">
+                <i class="bi bi-wordpress"></i>
+            </div>
+            <div>
+                <div class="admin-sidebar-title">XL Satu Admin</div>
+                <div class="admin-sidebar-subtitle">Content Management System</div>
+            </div>
+        </div>
+
+        <ul class="admin-nav">
+            <li class="nav-section-title">Menu Utama</li>
+            <li class="active" data-tab="dashboard">
+                <a href="#dashboard"><i class="bi bi-speedometer2"></i> Dashboard Overview</a>
+            </li>
+            <li data-tab="leads">
+                <a href="#leads"><i class="bi bi-people-fill"></i> Pendaftaran Masuk <span class="badge-count" id="leads-sidebar-count">0</span></a>
+            </li>
+            <li data-tab="paket">
+                <a href="#paket"><i class="bi bi-box-seam-fill"></i> Kelola Paket (CRUD)</a>
+            </li>
+            <li data-tab="reviews">
+                <a href="#reviews"><i class="bi bi-star-fill"></i> Review (Kata Mereka)</a>
+            </li>
+            <li data-tab="media">
+                <a href="#media"><i class="bi bi-images"></i> Brosur & Flyer Info</a>
+            </li>
+            <li data-tab="whatsapp">
+                <a href="#whatsapp"><i class="bi bi-whatsapp"></i> Kontak WhatsApp</a>
+            </li>
+            <li data-tab="sales">
+                <a href="#sales"><i class="bi bi-person-badge-fill"></i> Sales Rep (ONES)</a>
+            </li>
+            <li data-tab="customercare">
+                <a href="#customercare"><i class="bi bi-headset"></i> Customer Care (820)</a>
+            </li>
+            <li data-tab="faq">
+                <a href="#faq"><i class="bi bi-question-circle-fill"></i> Kelola FAQ (CRUD)</a>
+            </li>
+            <li class="nav-section-title">Pengaturan & Keamanan</li>
+            <li data-tab="hero">
+                <a href="#hero"><i class="bi bi-card-heading"></i> Teks Hero & Jangkauan</a>
+            </li>
+            <li data-tab="pengaturan">
+                <a href="#pengaturan"><i class="bi bi-sliders"></i> Info Branding & Footer</a>
+            </li>
+            <li data-tab="auth">
+                <a href="#auth"><i class="bi bi-shield-lock-fill"></i> Akun & Password Admin</a>
+            </li>
+            <li data-tab="backup">
+                <a href="#backup"><i class="bi bi-database-down"></i> Backup & Restore</a>
+            </li>
+        </ul>
+
+        <div class="sidebar-footer">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <span style="font-size: 11px; color: #9ca3af;">Login: <strong id="sidebar-admin-user">admin</strong></span>
+                <button onclick="logoutAdmin()" class="wp-btn wp-btn-secondary wp-btn-sm" style="padding: 3px 8px; font-size: 11px;">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                </button>
+            </div>
+            <strong>Supported by arif soft</strong>
+            <div>Telp/WA: 082113842783</div>
+        </div>
+    </aside>
+
+    <!-- ==========================================================================
+         MAIN WRAPPER
+         ========================================================================== -->
+    <div class="admin-main">
+        <!-- TOPBAR -->
+        <header class="admin-topbar">
+            <div class="topbar-left">
+                <button class="mobile-toggle" onclick="toggleSidebar()" aria-label="Toggle Menu">
+                    <i class="bi bi-list"></i>
+                </button>
+                <span style="font-weight: 600; color: #646970; font-size: 13px;">
+                    <i class="bi bi-house-door"></i> XL Satu Fiber & Broadband Management Portal
+                </span>
+            </div>
+            <div class="topbar-right" style="display: flex; align-items: center; gap: 12px;">
+                <a href="index.html" target="_blank" class="btn-visit-site">
+                    <i class="bi bi-box-arrow-up-right"></i> Lihat Website Utama
+                </a>
+                <button onclick="logoutAdmin()" class="wp-btn wp-btn-secondary wp-btn-sm">
+                    <i class="bi bi-box-arrow-right"></i> Keluar
+                </button>
+            </div>
+        </header>
+
+        <!-- CONTENT -->
+        <main class="admin-content">
+
+            <!-- TAB 1: DASHBOARD OVERVIEW -->
+            <section id="section-dashboard" class="tab-pane">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title"><i class="bi bi-speedometer2"></i> Dashboard Overview</h1>
+                        <p style="color: #646970; font-size: 13px; margin-top: 4px;">
+                            Panel kontrol CMS untuk mengelola paket, pendaftaran online, review pelanggan, brosur flyer, kontak WhatsApp, dan akun admin.
+                        </p>
+                    </div>
+                    <div class="page-actions">
+                        <button class="wp-btn wp-btn-primary" onclick="openPackageModal()">
+                            <i class="bi bi-plus-lg"></i> Tambah Paket
+                        </button>
+                        <button class="wp-btn wp-btn-secondary" onclick="openBrochureModal()">
+                            <i class="bi bi-image"></i> Tambah Flyer
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stats Overview -->
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-icon blue"><i class="bi bi-people-fill"></i></div>
+                        <div>
+                            <div class="stat-val" id="stat-total-leads">0</div>
+                            <div class="stat-label">Pendaftaran Masuk (Leads)</div>
+                        </div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-icon green"><i class="bi bi-box-seam"></i></div>
+                        <div>
+                            <div class="stat-val" id="stat-total-packages">0</div>
+                            <div class="stat-label">Paket Internet Aktif</div>
+                        </div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-icon purple"><i class="bi bi-star-fill"></i></div>
+                        <div>
+                            <div class="stat-val" id="stat-total-reviews">0</div>
+                            <div class="stat-label">Review Pelanggan</div>
+                        </div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-icon orange"><i class="bi bi-images"></i></div>
+                        <div>
+                            <div class="stat-val" id="stat-total-flyers">6</div>
+                            <div class="stat-label">Brosur & Info Flyer</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Summary Card -->
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <div class="admin-card-title"><i class="bi bi-whatsapp"></i> Kontak WhatsApp Terhubung Real-Time</div>
+                    </div>
+                    <div class="admin-card-body">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
+                            <div style="background: #f8fafc; padding: 14px; border-radius: 6px; border-left: 4px solid #16a34a;">
+                                <div style="font-size: 11px; color: #64748b; font-weight: 700;">WA PENDAFTARAN & SALES</div>
+                                <div style="font-size: 18px; font-weight: 800; color: #16a34a;" id="dash-sales-phone">085755836988</div>
+                                <div style="font-size: 12px; color: #64748b;">Menerima formulir pendaftaran user</div>
+                            </div>
+                            <div style="background: #f8fafc; padding: 14px; border-radius: 6px; border-left: 4px solid #004ae8;">
+                                <div style="font-size: 11px; color: #64748b; font-weight: 700;">CUSTOMER CARE (XL)</div>
+                                <div style="font-size: 18px; font-weight: 800; color: #004ae8;" id="dash-xl-phone">820</div>
+                                <div style="font-size: 12px; color: #64748b;">Khusus pengguna kartu XL</div>
+                            </div>
+                            <div style="background: #f8fafc; padding: 14px; border-radius: 6px; border-left: 4px solid #0284c7;">
+                                <div style="font-size: 11px; color: #64748b; font-weight: 700;">NON-XL & TELP RUMAH</div>
+                                <div style="font-size: 18px; font-weight: 800; color: #0284c7;" id="dash-nonxl-phone">0817 0123 442</div>
+                                <div style="font-size: 12px; color: #64748b;">Semua Operator & PSTN</div>
+                            </div>
+                            <div style="background: #f8fafc; padding: 14px; border-radius: 6px; border-left: 4px solid #d97706;">
+                                <div style="font-size: 11px; color: #64748b; font-weight: 700;">WHATSAPP CARE 24 JAM</div>
+                                <div style="font-size: 18px; font-weight: 800; color: #b45309;" id="dash-wa-phone">0817 0010 820</div>
+                                <div style="font-size: 12px; color: #64748b;">Pengaduan Resmi Gangguan</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 2: PENDAFTARAN MASUK (LEADS) -->
+            <section id="section-leads" class="tab-pane" style="display: none;">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title"><i class="bi bi-people-fill"></i> Pendaftaran Online Masuk (Leads)</h1>
+                        <p style="color: #646970; font-size: 13px;">
+                            Data formulir pendaftaran yang diinput oleh pengunjung dari website.
+                        </p>
+                    </div>
+                    <div class="page-actions">
+                        <button class="wp-btn wp-btn-danger" onclick="confirmClearLeads()">
+                            <i class="bi bi-trash"></i> Bersihkan Semua Data
+                        </button>
+                    </div>
+                </div>
+
+                <div class="admin-card">
+                    <div class="admin-card-body" style="padding: 0;">
+                        <div class="wp-table-wrap">
+                            <table class="wp-table">
+                                <thead>
+                                    <tr>
+                                        <th>Waktu</th>
+                                        <th>Nama Pemohon</th>
+                                        <th>No. HP / WhatsApp</th>
+                                        <th>Paket Dipilih</th>
+                                        <th>Alamat Pemasangan</th>
+                                        <th>Catatan</th>
+                                        <th style="width: 130px; text-align: center;">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="leads-table-body">
+                                    <!-- Populated by admin.js -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 3: KELOLA PAKET INTERNET (CRUD LENGKAP) -->
+            <section id="section-paket" class="tab-pane" style="display: none;">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title"><i class="bi bi-box-seam-fill"></i> Kelola Paket Internet (Full CRUD)</h1>
+                        <p style="color: #646970; font-size: 13px;">
+                            Tambah paket baru, ubah kategori (Promo 4 Bulan / Kabel FTTH / Wifi Tanpa Kabel), harga, kecepatan, atau hapus paket.
+                        </p>
+                    </div>
+                    <div class="page-actions">
+                        <button class="wp-btn wp-btn-primary" onclick="openPackageModal()">
+                            <i class="bi bi-plus-circle"></i> Tambah Paket Baru
+                        </button>
+                    </div>
+                </div>
+
+                <div class="admin-card">
+                    <div class="admin-card-body" style="padding: 0;">
+                        <div class="wp-table-wrap">
+                            <table class="wp-table" id="packages-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nama Paket</th>
+                                        <th>Kategori</th>
+                                        <th>Kecepatan</th>
+                                        <th>Harga</th>
+                                        <th>Keterangan / Badge</th>
+                                        <th style="width: 150px; text-align: center;">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="packages-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 4: REVIEW PELANGGAN / KATA MEREKA -->
+            <section id="section-reviews" class="tab-pane" style="display: none;">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title"><i class="bi bi-star-fill"></i> Kelola Review / Kata Mereka</h1>
+                        <p style="color: #646970; font-size: 13px;">
+                            Kelola ulasan testimoni pelanggan yang tampil di bagian "Kata Mereka".
+                        </p>
+                    </div>
+                    <div class="page-actions">
+                        <button class="wp-btn wp-btn-primary" onclick="openReviewAdminModal()">
+                            <i class="bi bi-plus-circle"></i> Tambah Review Baru
+                        </button>
+                    </div>
+                </div>
+
+                <div class="admin-card">
+                    <div class="admin-card-body" style="padding: 0;">
+                        <div class="wp-table-wrap">
+                            <table class="wp-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nama Pelanggan</th>
+                                        <th>Kota / Area</th>
+                                        <th>Paket</th>
+                                        <th>Rating</th>
+                                        <th>Ulasan / Komentar</th>
+                                        <th>Tanggal</th>
+                                        <th style="width: 140px; text-align: center;">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="reviews-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 5: BROSUR & FLYER INFO (BISA EDIT / GANTI GAMBAR MANUAL) -->
+            <section id="section-media" class="tab-pane" style="display: none;">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title"><i class="bi bi-images"></i> Galeri Brosur & Flyer Info</h1>
+                        <p style="color: #646970; font-size: 13px;">
+                            Edit judul, deskripsi, ganti file gambar flyer, atau tambah materi promo baru.
+                        </p>
+                    </div>
+                    <div class="page-actions">
+                        <button class="wp-btn wp-btn-primary" onclick="openBrochureModal()">
+                            <i class="bi bi-plus-circle"></i> Tambah Flyer / Info Baru
+                        </button>
+                    </div>
+                </div>
+
+                <div id="admin-brochures-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
+                    <!-- Populated dynamically -->
+                </div>
+            </section>
+
+            <!-- TAB 6: KONTAK WHATSAPP TERPADU -->
+            <section id="section-whatsapp" class="tab-pane" style="display: none;">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title"><i class="bi bi-whatsapp"></i> Pengaturan Kontak WhatsApp Terpadu</h1>
+                        <p style="color: #646970; font-size: 13px;">
+                            Ubah nomor WhatsApp tujuan pendaftaran, sales, CS, dan developer. Nomor ini otomatis tersinkronisasi ke seluruh tombol di landing page!
+                        </p>
+                    </div>
+                </div>
+
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <div class="admin-card-title"><i class="bi bi-telephone-plus"></i> Form Nomor WhatsApp Website</div>
+                    </div>
+                    <div class="admin-card-body">
+                        <form id="form-whatsapp-settings" onsubmit="saveWhatsappSettings(event)">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Nomor WA Sales Representative (ONES)</label>
+                                    <input type="text" class="form-control" id="input-wa-sales" placeholder="085755836988" required>
+                                    <div class="form-help">Untuk tombol Chat Sales & Banner ONES</div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Nomor WA Tujuan Formulir Pendaftaran</label>
+                                    <input type="text" class="form-control" id="input-wa-reg" placeholder="085755836988" required>
+                                    <div class="form-help">Penerima rekap formulir pendaftaran user</div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Nomor WA Resmi Customer Care (24 Jam)</label>
+                                    <input type="text" class="form-control" id="input-wa-care" placeholder="08170010820" required>
+                                    <div class="form-help">Sesuai flyer resmi XL: 0817 0010 820</div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Nomor WA Supported Developer (Arif Soft)</label>
+                                    <input type="text" class="form-control" id="input-wa-dev" placeholder="082113842783" required>
+                                    <div class="form-help">Default: 082113842783</div>
+                                </div>
+                            </div>
+                            <button type="submit" class="wp-btn wp-btn-primary" style="margin-top: 14px;">
+                                <i class="bi bi-check-lg"></i> Simpan Seluruh Nomor WhatsApp
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 7: SALES REPRESENTATIVE (ONES) -->
+            <section id="section-sales" class="tab-pane" style="display: none;">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title"><i class="bi bi-person-badge-fill"></i> Sales Representative (Brosur Flyer)</h1>
+                    </div>
+                </div>
+
+                <div class="admin-card">
+                    <div class="admin-card-body">
+                        <form id="form-sales-rep" onsubmit="saveSalesRep(event)">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Nama Sales</label>
+                                    <input type="text" class="form-control" id="input-sales-name" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Nomor WhatsApp Sales</label>
+                                    <input type="text" class="form-control" id="input-sales-phone" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Jabatan / Role</label>
+                                    <input type="text" class="form-control" id="input-sales-role">
+                                </div>
+                                <div class="form-group">
+                                    <label>Teks Pesan WhatsApp Otomatis</label>
+                                    <input type="text" class="form-control" id="input-sales-msg">
+                                </div>
+                            </div>
+                            <button type="submit" class="wp-btn wp-btn-primary" style="margin-top: 10px;">
+                                <i class="bi bi-check-lg"></i> Simpan Data Sales
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 8: CUSTOMER CARE -->
+            <section id="section-customercare" class="tab-pane" style="display: none;">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title"><i class="bi bi-headset"></i> Media Customer Care Resmi</h1>
+                    </div>
+                </div>
+
+                <div class="admin-card">
+                    <div class="admin-card-body">
+                        <form id="form-customer-care" onsubmit="saveCustomerCare(event)">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Call Center Khusus Pengguna XL</label>
+                                    <input type="text" class="form-control" id="input-xl-phone" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Call Center Pengguna Non-XL</label>
+                                    <input type="text" class="form-control" id="input-nonxl-phone" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Nomor WhatsApp Resmi Customer Care</label>
+                                    <input type="text" class="form-control" id="input-wa-phone" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Email Resmi Dukungan Pelanggan</label>
+                                    <input type="email" class="form-control" id="input-email" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="wp-btn wp-btn-primary" style="margin-top: 10px;">
+                                <i class="bi bi-check-lg"></i> Simpan Kontak Customer Care
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 9: FAQ -->
+            <section id="section-faq" class="tab-pane" style="display: none;">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title"><i class="bi bi-question-circle-fill"></i> Kelola Tanya Jawab (FAQ)</h1>
+                    </div>
+                    <div class="page-actions">
+                        <button class="wp-btn wp-btn-primary" onclick="openFaqModal()">
+                            <i class="bi bi-plus-circle"></i> Tambah FAQ Baru
+                        </button>
+                    </div>
+                </div>
+
+                <div class="admin-card">
+                    <div class="admin-card-body" style="padding: 0;">
+                        <div class="wp-table-wrap">
+                            <table class="wp-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 35%;">Pertanyaan</th>
+                                        <th>Jawaban</th>
+                                        <th style="width: 140px; text-align: center;">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="faq-table-body"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 10: HERO CONTENT -->
+            <section id="section-hero" class="tab-pane" style="display: none;">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title"><i class="bi bi-card-heading"></i> Konten Hero Banner & Wilayah Jangkauan</h1>
+                    </div>
+                </div>
+
+                <div class="admin-card">
+                    <div class="admin-card-body">
+                        <form id="form-hero" onsubmit="saveHeroContent(event)">
+                            <div class="form-group">
+                                <label>Wilayah Jangkauan (Ticker)</label>
+                                <input type="text" class="form-control" id="input-coverage-area" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Badge Penghargaan Atas</label>
+                                <input type="text" class="form-control" id="input-hero-badge" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Teks Harga Mulai (Price Tag)</label>
+                                <input type="text" class="form-control" id="input-hero-price" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Subjudul / Penjelasan Singkat</label>
+                                <textarea class="form-control" id="input-hero-subtitle" rows="3" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Catatan Promo Bawah</label>
+                                <input type="text" class="form-control" id="input-hero-promo">
+                            </div>
+                            <button type="submit" class="wp-btn wp-btn-primary">
+                                <i class="bi bi-check-lg"></i> Simpan Konten Hero
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 11: PENGATURAN UMUM & FOOTER -->
+            <section id="section-pengaturan" class="tab-pane" style="display: none;">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title"><i class="bi bi-sliders"></i> Pengaturan Website & Footer</h1>
+                    </div>
+                </div>
+
+                <div class="admin-card">
+                    <div class="admin-card-body">
+                        <form id="form-settings" onsubmit="saveSiteSettings(event)">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Judul Tab Website (Meta Title)</label>
+                                    <input type="text" class="form-control" id="input-site-title" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Nama Brand</label>
+                                    <input type="text" class="form-control" id="input-brand-name" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Supported By (Atribusi)</label>
+                                    <input type="text" class="form-control" id="input-supported-by" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Nomor Telepon Arif Soft</label>
+                                    <input type="text" class="form-control" id="input-supported-phone" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="wp-btn wp-btn-primary" style="margin-top: 10px;">
+                                <i class="bi bi-check-lg"></i> Simpan Pengaturan
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 12: AKUN & PASSWORD ADMIN (USER & PASS BISA DIEDIT) -->
+            <section id="section-auth" class="tab-pane" style="display: none;">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title"><i class="bi bi-shield-lock-fill"></i> Keamanan Akun & Password Admin</h1>
+                        <p style="color: #646970; font-size: 13px;">
+                            Ubah username dan password yang digunakan untuk mengakses halaman admin CMS ini.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <div class="admin-card-title"><i class="bi bi-key-fill"></i> Form Ganti Username & Password Admin</div>
+                    </div>
+                    <div class="admin-card-body">
+                        <form id="form-admin-auth" onsubmit="saveAdminAuth(event)">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Username Admin Baru</label>
+                                    <input type="text" class="form-control" id="input-admin-user" required>
+                                    <div class="form-help">Username untuk login ke admin.html</div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Password Baru</label>
+                                    <input type="password" class="form-control" id="input-admin-pass" placeholder="Minimal 4 karakter" required>
+                                </div>
+                            </div>
+                            <div class="form-group" style="max-width: 400px; margin-top: 10px;">
+                                <label>Konfirmasi Password Baru</label>
+                                <input type="password" class="form-control" id="input-admin-pass-confirm" placeholder="Ulangi password baru" required>
+                            </div>
+                            <button type="submit" class="wp-btn wp-btn-primary" style="margin-top: 14px;">
+                                <i class="bi bi-shield-check"></i> Perbarui Akun & Password Admin
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 13: BACKUP & RESTORE -->
+            <section id="section-backup" class="tab-pane" style="display: none;">
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title"><i class="bi bi-database-down"></i> Backup, Restore & Reset Data</h1>
+                    </div>
+                </div>
+
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <div class="admin-card-title"><i class="bi bi-download"></i> Cadangkan Data (Export JSON)</div>
+                    </div>
+                    <div class="admin-card-body">
+                        <p style="color: #64748b; margin-bottom: 16px;">
+                            Unduh seluruh konfigurasi paket, review, info brosur, nomor WhatsApp, dan akun admin ke komputer Anda.
+                        </p>
+                        <button class="wp-btn wp-btn-primary" onclick="SiteDB.exportJson()">
+                            <i class="bi bi-cloud-arrow-down-fill"></i> Download Backup JSON
+                        </button>
+                    </div>
+                </div>
+
+                <div class="admin-card">
+                    <div class="admin-card-header">
+                        <div class="admin-card-title"><i class="bi bi-upload"></i> Pulihkan Data (Import JSON)</div>
+                    </div>
+                    <div class="admin-card-body">
+                        <input type="file" id="import-json-file" accept=".json" style="margin-bottom: 12px; display: block;">
+                        <button class="wp-btn wp-btn-secondary" onclick="handleImportJson()">
+                            <i class="bi bi-cloud-arrow-up-fill"></i> Import Data dari File
+                        </button>
+                    </div>
+                </div>
+
+                <div class="admin-card" style="border-color: #fca5a5;">
+                    <div class="admin-card-header" style="background: #fef2f2;">
+                        <div class="admin-card-title" style="color: #991b1b;"><i class="bi bi-exclamation-triangle-fill"></i> Reset ke Data Awal Pabrik</div>
+                    </div>
+                    <div class="admin-card-body">
+                        <button class="wp-btn wp-btn-danger" onclick="confirmResetDefault()">
+                            <i class="bi bi-arrow-counterclockwise"></i> Reset ke Setelan Awal Pabrik
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- ==========================================================================
+         MODAL: TAMBAH / EDIT PAKET LAYANAN (FULL CRUD)
+         ========================================================================== -->
+    <div class="admin-modal" id="modal-package">
+        <div class="admin-modal-dialog">
+            <div class="admin-modal-header">
+                <h3 id="modal-package-title">Tambah Paket Baru</h3>
+                <button class="modal-close-btn" onclick="closePackageModal()">&times;</button>
+            </div>
+            <form id="form-package-crud" onsubmit="handleSavePackage(event)">
+                <input type="hidden" id="pkg-edit-id">
+                <div class="admin-modal-body">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Nama Paket</label>
+                            <input type="text" class="form-control" id="pkg-name" placeholder="Contoh: SPARK 150" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Kategori Paket</label>
+                            <select class="form-control" id="pkg-category" required>
+                                <option value="promo4bln">Promo Bayar 4 Bulan Langsung</option>
+                                <option value="ftth" selected>Kabel FTTH Fiber Optik</option>
+                                <option value="wireless">Wifi Rumah Tanpa Kabel</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Kecepatan Internet</label>
+                            <input type="text" class="form-control" id="pkg-speed" placeholder="Contoh: Up to 350 Mbps" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Harga Tampil</label>
+                            <input type="text" class="form-control" id="pkg-price" placeholder="Contoh: Rp 309.000" required>
+                        </div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Periode Pembayaran</label>
+                            <input type="text" class="form-control" id="pkg-period" placeholder="/bulan atau untuk 4 bulan">
+                        </div>
+                        <div class="form-group">
+                            <label>Keterangan Setara Per Bulan (Opsional)</label>
+                            <input type="text" class="form-control" id="pkg-monthly-eq" placeholder="Contoh: Setara Rp 180.000 / bln">
+                        </div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Bonus Kuota HP / Informasi PPN</label>
+                            <input type="text" class="form-control" id="pkg-quota" placeholder="Contoh: Termasuk PPN 11% atau Kuota 8GB">
+                        </div>
+                        <div class="form-group">
+                            <label>Badge Promo</label>
+                            <input type="text" class="form-control" id="pkg-badge" placeholder="Contoh: FAVORIT KELUARGA">
+                        </div>
+                    </div>
+                    <div class="form-group" style="display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="pkg-is-popular" style="width: 18px; height: 18px;">
+                        <label for="pkg-is-popular" style="margin: 0; cursor: pointer;">Tandai sebagai Paket Unggulan (Highlighted)</label>
+                    </div>
+                    <div class="form-group">
+                        <label>Fitur & Benefit (Pisahkan dengan baris baru)</label>
+                        <textarea class="form-control" id="pkg-features" rows="4" placeholder="Kecepatan Fiber Stabil&#10;Unlimited Tanpa FUP&#10;Gratis Sewa Router&#10;Layanan 24 Jam"></textarea>
+                    </div>
+                </div>
+                <div class="admin-modal-footer">
+                    <button type="button" class="wp-btn wp-btn-secondary" onclick="closePackageModal()">Batal</button>
+                    <button type="submit" class="wp-btn wp-btn-primary">
+                        <i class="bi bi-save"></i> Simpan Data Paket
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==========================================================================
+         MODAL: TAMBAH / EDIT BROSUR & FLYER INFO (BISA EDIT / UPLOAD GAMBAR)
+         ========================================================================== -->
+    <div class="admin-modal" id="modal-brochure">
+        <div class="admin-modal-dialog">
+            <div class="admin-modal-header">
+                <h3 id="modal-brochure-title">Edit Materi Brosur & Flyer Info</h3>
+                <button class="modal-close-btn" onclick="closeBrochureModal()">&times;</button>
+            </div>
+            <form id="form-brochure-crud" onsubmit="handleSaveBrochure(event)">
+                <input type="hidden" id="brochure-edit-id">
+                <div class="admin-modal-body">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Judul Brosur / Info Flyer</label>
+                            <input type="text" class="form-control" id="brochure-title" placeholder="Contoh: Promo Hemat Bayar 4 Bulan" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Tag / Label Kategori</label>
+                            <input type="text" class="form-control" id="brochure-tag" placeholder="Contoh: Hero Promo, Special Promo, Paket FTTH" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>URL Gambar atau Path</label>
+                        <input type="text" class="form-control" id="brochure-image-url" placeholder="assets/images/hero-wifi-terbaik.jpeg atau link URL gambar" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Atau Pilih File Gambar dari Komputer (Upload Langsung)</label>
+                        <input type="file" id="brochure-file-input" accept="image/*" class="form-control" onchange="previewBrochureFile(this)">
+                        <div class="form-help">Pilih file JPG/PNG dari komputer untuk mengganti gambar flyer secara instan.</div>
+                    </div>
+
+                    <!-- Image Preview -->
+                    <div class="form-group" id="brochure-preview-box" style="text-align: center; background: #000; padding: 10px; border-radius: 6px; display: none;">
+                        <img id="brochure-preview-img" src="" alt="Preview" style="max-height: 180px; max-width: 100%; object-fit: contain;">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Deskripsi Brosur / Penjelasan Info</label>
+                        <textarea class="form-control" id="brochure-desc" rows="3" placeholder="Jelaskan rincian promo atau informasi flyer ini..." required></textarea>
+                    </div>
+                </div>
+                <div class="admin-modal-footer">
+                    <button type="button" class="wp-btn wp-btn-secondary" onclick="closeBrochureModal()">Batal</button>
+                    <button type="submit" class="wp-btn wp-btn-primary">
+                        <i class="bi bi-save"></i> Simpan Flyer Info
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==========================================================================
+         MODAL: TAMBAH / EDIT REVIEW PELANGGAN (KATA MEREKA)
+         ========================================================================== -->
+    <div class="admin-modal" id="modal-review">
+        <div class="admin-modal-dialog">
+            <div class="admin-modal-header">
+                <h3 id="modal-review-title">Tambah Review Pelanggan</h3>
+                <button class="modal-close-btn" onclick="closeReviewAdminModal()">&times;</button>
+            </div>
+            <form id="form-review-crud" onsubmit="handleSaveReviewAdmin(event)">
+                <input type="hidden" id="review-edit-id">
+                <div class="admin-modal-body">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Nama Pelanggan</label>
+                            <input type="text" class="form-control" id="admin-rev-name" placeholder="Contoh: Budi Santoso" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Kota / Area</label>
+                            <input type="text" class="form-control" id="admin-rev-city" placeholder="Contoh: Rungkut, Surabaya" required>
+                        </div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Paket yang Digunakan</label>
+                            <input type="text" class="form-control" id="admin-rev-package" placeholder="Contoh: SPARK 150 (Up to 350 Mbps)">
+                        </div>
+                        <div class="form-group">
+                            <label>Rating Bintang</label>
+                            <select class="form-control" id="admin-rev-rating">
+                                <option value="5" selected>5 Bintang (⭐⭐⭐⭐⭐)</option>
+                                <option value="4">4 Bintang (⭐⭐⭐⭐)</option>
+                                <option value="3">3 Bintang (⭐⭐⭐)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Ulasan / Komentar Testimoni</label>
+                        <textarea class="form-control" id="admin-rev-comment" rows="4" placeholder="Tuliskan pengalaman pelanggan..." required></textarea>
+                    </div>
+                </div>
+                <div class="admin-modal-footer">
+                    <button type="button" class="wp-btn wp-btn-secondary" onclick="closeReviewAdminModal()">Batal</button>
+                    <button type="submit" class="wp-btn wp-btn-primary">
+                        <i class="bi bi-save"></i> Simpan Review
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==========================================================================
+         MODAL: TAMBAH / EDIT FAQ (FULL CRUD)
+         ========================================================================== -->
+    <div class="admin-modal" id="modal-faq">
+        <div class="admin-modal-dialog">
+            <div class="admin-modal-header">
+                <h3 id="modal-faq-title">Tambah Tanya Jawab FAQ</h3>
+                <button class="modal-close-btn" onclick="closeFaqModal()">&times;</button>
+            </div>
+            <form id="form-faq-crud" onsubmit="handleSaveFaq(event)">
+                <input type="hidden" id="faq-edit-id">
+                <div class="admin-modal-body">
+                    <div class="form-group">
+                        <label>Pertanyaan</label>
+                        <input type="text" class="form-control" id="faq-question" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Jawaban</label>
+                        <textarea class="form-control" id="faq-answer" rows="4" required></textarea>
+                    </div>
+                </div>
+                <div class="admin-modal-footer">
+                    <button type="button" class="wp-btn wp-btn-secondary" onclick="closeFaqModal()">Batal</button>
+                    <button type="submit" class="wp-btn wp-btn-primary">
+                        <i class="bi bi-save"></i> Simpan FAQ
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- TOAST CONTAINER -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- SCRIPTS -->
+    <script src="js/data.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>
