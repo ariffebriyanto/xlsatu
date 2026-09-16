@@ -8,6 +8,19 @@ let activeCategoryFilter = 'all';
 document.addEventListener('DOMContentLoaded', () => {
     initLuxuryLandingPage();
 
+    // Auto-format input nomor WhatsApp pendaftaran: jika ketik 0 otomatis berubah jadi 62
+    const regPhoneInput = document.getElementById('reg-user-phone');
+    if (regPhoneInput) {
+        regPhoneInput.addEventListener('input', function() {
+            let val = this.value;
+            if (val.startsWith('0')) {
+                this.value = '62' + val.substring(1);
+            } else if (val.startsWith('+62')) {
+                this.value = '62' + val.substring(3);
+            }
+        });
+    }
+
     // Re-render jika ada perubahan data dari CMS Admin
     window.addEventListener('xlsatu_data_updated', () => {
         initLuxuryLandingPage();
@@ -249,11 +262,20 @@ window.handleRegistrationSubmit = function(e) {
     e.preventDefault();
 
     const name = document.getElementById('reg-user-name')?.value.trim();
-    const phone = document.getElementById('reg-user-phone')?.value.trim();
+    let rawPhone = document.getElementById('reg-user-phone')?.value.trim() || '';
     const email = document.getElementById('reg-user-email')?.value.trim();
     const packageName = document.getElementById('reg-user-package')?.value.trim();
     const address = document.getElementById('reg-user-address')?.value.trim();
     const notes = document.getElementById('reg-user-notes')?.value.trim() || '-';
+
+    // Normalisasi Nomor WhatsApp agar SELALU diawali dengan 62 (bukan 0)
+    let cleanPhone = rawPhone.replace(/[^0-9]/g, '');
+    if (cleanPhone.startsWith('0')) {
+        cleanPhone = '62' + cleanPhone.substring(1);
+    } else if (cleanPhone && !cleanPhone.startsWith('62')) {
+        cleanPhone = '62' + cleanPhone;
+    }
+    const phone = cleanPhone;
 
     if (!name || !phone || !email || !packageName || !address) {
         alert('Mohon lengkapi semua kolom formulir pendaftaran yang bertanda bintang (*).');
@@ -264,7 +286,7 @@ window.handleRegistrationSubmit = function(e) {
     const waContacts = data.whatsappContacts || {};
     const targetWa = (waContacts.registration || waContacts.sales || data.salesRep?.phone || '085755836988').replace(/[^0-9]/g, '');
 
-    // Simpan Lead Pendaftaran ke Local Database
+    // Simpan Lead Pendaftaran ke Local/Supabase Database dengan awalan 62
     if (window.SiteDB && window.SiteDB.addRegistration) {
         window.SiteDB.addRegistration({
             name,

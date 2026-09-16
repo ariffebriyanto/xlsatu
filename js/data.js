@@ -905,10 +905,19 @@ const SiteDB = {
         const now = new Date();
         const dateStr = now.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) + ' ' +
                         now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+
+        // Pastikan format nomor telepon/WhatsApp selalu diawali 62
+        let p = (reg.phone || '').replace(/[^0-9]/g, '');
+        if (p.startsWith('0')) {
+            p = '62' + p.substring(1);
+        } else if (p && !p.startsWith('62')) {
+            p = '62' + p;
+        }
+
         const newReg = {
             id: 'reg-' + Date.now(),
             name: reg.name || '',
-            phone: reg.phone || '',
+            phone: p || reg.phone || '',
             email: reg.email || '',
             address: reg.address || '',
             packageName: reg.packageName || 'Belum Ditentukan',
