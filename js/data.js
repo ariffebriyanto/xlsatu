@@ -422,19 +422,7 @@ const DEFAULT_SITE_DATA = {
         }
     ],
     // Database Formulir Pendaftaran Masuk (Leads Pendaftar)
-    registrations: [
-        {
-            id: "reg-demo-1",
-            name: "Rizky Ramadhan",
-            phone: "081234567890",
-            email: "rizky@gmail.com",
-            address: "Jl. Manyar Kertoarjo No. 15, Gubeng, Surabaya",
-            packageName: "SPARK 150 (Up to 350 Mbps)",
-            notes: "Mohon pasang router di lantai 2",
-            date: "14 September 2026 14:30",
-            status: "Baru"
-        }
-    ]
+    registrations: []
 };
 
 // ==========================================================================
@@ -935,7 +923,7 @@ const SiteDB = {
 
     deleteRegistration: function(id) {
         const data = this.getData();
-        data.registrations = data.registrations.filter(r => r.id !== id);
+        data.registrations = (data.registrations || []).filter(r => String(r.id) !== String(id));
         this.saveData(data);
         return true;
     },

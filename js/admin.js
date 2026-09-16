@@ -5,15 +5,26 @@
  * Leads Pendaftaran Online Masuk, dan Manajemen Akun Admin.
  */
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     checkAdminSession();
     initAdminTabs();
     loadAllAdminData();
+
+    // Tunggu inisialisasi cloud database Supabase selesai, lalu render ulang data terbaru
+    if (window.SiteDB) {
+        await window.SiteDB.init();
+        loadAllAdminData();
+    }
 
     if (window.location.hash) {
         const tabKey = window.location.hash.replace('#', '');
         switchTab(tabKey);
     }
+});
+
+// Listener saat data dari Supabase selesai disinkronkan di background
+window.addEventListener('xlsatu_data_updated', () => {
+    loadAllAdminData();
 });
 
 // ==========================================================================
