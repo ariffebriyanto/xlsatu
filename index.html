@@ -327,9 +327,23 @@
             <p class="section-desc" style="color: #94a3b8;">
                 Seluruh materi promosi, daftar harga promo, dan saluran customer care resmi yang dapat Anda tinjau dan unduh.
             </p>
+        <!-- Pilihan Mode Tampilan Flyer (Grid / Slider / Carousel) -->
+        <div class="flyer-display-toolbar">
+            <span class="flyer-toolbar-label"><i class="bi bi-display"></i> Mode Tampilan:</span>
+            <div class="flyer-mode-pills">
+                <button type="button" class="mode-pill-btn active" id="btn-mode-grid" onclick="switchPublicFlyerMode('grid')" title="Mode Grid Berjajar">
+                    <i class="bi bi-grid-3x3-gap-fill"></i> Grid
+                </button>
+                <button type="button" class="mode-pill-btn" id="btn-mode-slider" onclick="switchPublicFlyerMode('slider')" title="Mode Slider Geser Horizontal">
+                    <i class="bi bi-sliders2-vertical"></i> Slider
+                </button>
+                <button type="button" class="mode-pill-btn" id="btn-mode-carousel" onclick="switchPublicFlyerMode('carousel')" title="Mode Carousel Panggung Putar">
+                    <i class="bi bi-collection-play-fill"></i> Carousel
+                </button>
+            </div>
         </div>
 
-        <div class="gallery-grid" id="brochures-gallery-container">
+        <div id="brochures-gallery-container">
             <!-- Populated dynamically by js/main.js from SiteDB -->
         </div>
     </section>

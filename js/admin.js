@@ -180,6 +180,9 @@ function loadAllAdminData() {
     document.getElementById('input-brand-name').value = data.settings.brandName || '';
     document.getElementById('input-supported-by').value = data.settings.supportedBy || 'arif soft 082113842783';
     document.getElementById('input-supported-phone').value = data.settings.supportedPhone || '082113842783';
+
+    // Populate Flyer Template & Display Mode
+    renderFlyerTemplateAdminSettings(data.settings || {});
 }
 
 // ==========================================================================
@@ -572,6 +575,77 @@ window.deleteBrochureItem = function(id, title) {
         showToast(`Flyer "${title}" telah dihapus.`);
         loadAllAdminData();
     }
+};
+
+// PENGATURAN TEMPLATE & MODE TAMPILAN FLYER (GRID / SLIDER / CAROUSEL)
+function renderFlyerTemplateAdminSettings(settings) {
+    const mode = settings.brochureDisplayMode || 'grid';
+    const tpl = settings.brochureTemplate || {};
+    window.selectFlyerMode(mode, true);
+
+    const autoPlayEl = document.getElementById('input-flyer-autoplay');
+    if (autoPlayEl) autoPlayEl.value = String(tpl.autoPlay !== false);
+
+    const intervalEl = document.getElementById('input-flyer-interval');
+    if (intervalEl) intervalEl.value = String(tpl.interval || 4000);
+
+    const themeEl = document.getElementById('input-flyer-theme');
+    if (themeEl) themeEl.value = tpl.cardTheme || 'cyber';
+}
+
+window.selectFlyerMode = function(mode, shouldUpdateRadio = true) {
+    window._selectedFlyerMode = mode;
+
+    ['grid', 'slider', 'carousel'].forEach(m => {
+        const card = document.getElementById(`card-mode-${m}`);
+        const radio = document.getElementById(`radio-mode-${m}`);
+        if (card) {
+            if (m === mode) {
+                card.style.borderColor = '#2271b1';
+                card.style.background = '#f0f7fc';
+                card.style.boxShadow = '0 2px 8px rgba(34, 113, 177, 0.15)';
+            } else {
+                card.style.borderColor = '#dcdcde';
+                card.style.background = '#ffffff';
+                card.style.boxShadow = 'none';
+            }
+        }
+        if (radio && shouldUpdateRadio) {
+            radio.checked = (m === mode);
+        }
+    });
+
+    const badge = document.getElementById('badge-active-mode-flyer');
+    if (badge) {
+        const labels = {
+            grid: 'Aktif: Mode Grid',
+            slider: 'Aktif: Mode Slider',
+            carousel: 'Aktif: Mode Carousel'
+        };
+        badge.textContent = labels[mode] || `Aktif: Mode ${mode.toUpperCase()}`;
+    }
+};
+
+window.saveFlyerTemplateMode = function(e) {
+    if (e) e.preventDefault();
+    const mode = window._selectedFlyerMode || 'grid';
+    const autoPlay = document.getElementById('input-flyer-autoplay')?.value === 'true';
+    const interval = parseInt(document.getElementById('input-flyer-interval')?.value || '4000', 10);
+    const cardTheme = document.getElementById('input-flyer-theme')?.value || 'cyber';
+
+    SiteDB.updateBrochureDisplayMode(mode, {
+        autoPlay,
+        interval,
+        cardTheme
+    });
+
+    const modeLabels = {
+        grid: 'Grid (Galeri Kartu)',
+        slider: 'Slider (Geser Horizontal)',
+        carousel: 'Carousel (Putar Otomatis)'
+    };
+    showToast(`Template flyer berhasil diubah ke mode ${modeLabels[mode]} dan disimpan ke SQLite!`);
+    loadAllAdminData();
 };
 
 // ==========================================================================

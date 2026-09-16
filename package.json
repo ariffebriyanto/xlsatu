@@ -4,9 +4,9 @@
   "description": "Website Resmi XL Satu Fiber & Home Broadband - Landing Page & CMS Admin",
   "main": "index.html",
   "scripts": {
-    "start": "npx -y serve . -p 3000",
-    "dev": "npx -y serve . -p 3000",
-    "serve": "npx -y serve ."
+    "start": "node server.js",
+    "dev": "node server.js",
+    "serve": "node server.js"
   },
   "keywords": [
     "xl-satu",

@@ -874,8 +874,22 @@ body {
     max-width: 1240px;
     margin: 0 auto;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 26px;
+    grid-template-columns: repeat(3, 1fr); /* 3 kolom per baris di desktop */
+    gap: 24px;
+}
+
+@media (max-width: 992px) {
+    .gallery-grid {
+        grid-template-columns: repeat(2, 1fr); /* 2 kolom di tablet */
+        gap: 20px;
+    }
+}
+
+@media (max-width: 640px) {
+    .gallery-grid {
+        grid-template-columns: 1fr; /* 1 kolom di layar HP responsif */
+        gap: 16px;
+    }
 }
 
 .brochure-card {
@@ -960,6 +974,259 @@ body {
     gap: 6px;
     text-decoration: none;
 }
+
+/* ==========================================================================
+   FLYER DISPLAY TOOLBAR (GRID / SLIDER / CAROUSEL)
+   ========================================================================== */
+.flyer-display-toolbar {
+    max-width: 1240px;
+    margin: 0 auto 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.flyer-toolbar-label {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.flyer-mode-pills {
+    display: inline-flex;
+    background: rgba(255, 255, 255, 0.07);
+    padding: 5px;
+    border-radius: 40px;
+    border: 1px solid rgba(0, 240, 255, 0.2);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.mode-pill-btn {
+    background: transparent;
+    border: none;
+    color: #cbd5e1;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 8px 18px;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.mode-pill-btn:hover {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.mode-pill-btn.active {
+    background: linear-gradient(135deg, #0052cc, #00d2ff);
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(0, 210, 255, 0.4);
+}
+
+/* ==========================================================================
+   MODE 2: FLYER HORIZONTAL SLIDER
+   ========================================================================== */
+.flyer-slider-wrapper {
+    max-width: 1240px;
+    margin: 0 auto;
+    position: relative;
+    padding: 0 10px;
+}
+
+.flyer-slider-track {
+    display: flex;
+    gap: 24px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    padding: 16px 4px 24px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 240, 255, 0.3) transparent;
+}
+
+.flyer-slider-track::-webkit-scrollbar {
+    height: 6px;
+}
+
+.flyer-slider-track::-webkit-scrollbar-thumb {
+    background: rgba(0, 240, 255, 0.35);
+    border-radius: 10px;
+}
+
+.flyer-slider-track .brochure-card {
+    flex: 0 0 320px;
+    max-width: 320px;
+    scroll-snap-align: start;
+}
+
+.slider-arrow-btn {
+    position: absolute;
+    top: 45%;
+    transform: translateY(-50%);
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: rgba(7, 13, 30, 0.85);
+    border: 1px solid rgba(0, 240, 255, 0.4);
+    color: #00f0ff;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.25s ease;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
+}
+
+.slider-arrow-btn:hover {
+    background: #00f0ff;
+    color: #070d1e;
+    box-shadow: 0 0 20px rgba(0, 240, 255, 0.6);
+    transform: translateY(-50%) scale(1.08);
+}
+
+.slider-arrow-btn.prev {
+    left: -20px;
+}
+
+.slider-arrow-btn.next {
+    right: -20px;
+}
+
+@media (max-width: 768px) {
+    .flyer-slider-track .brochure-card {
+        flex: 0 0 270px;
+        max-width: 270px;
+    }
+    .slider-arrow-btn {
+        display: none; /* di mobile swipe sentuh lebih nyaman */
+    }
+}
+
+/* ==========================================================================
+   MODE 3: FLYER LUXURY CAROUSEL (PANGGUNG PUTAR)
+   ========================================================================== */
+.flyer-carousel-wrapper {
+    max-width: 1100px;
+    margin: 0 auto;
+    position: relative;
+}
+
+.carousel-stage {
+    position: relative;
+    overflow: hidden;
+    padding: 20px 0;
+    border-radius: var(--radius-lg);
+}
+
+.carousel-track {
+    display: flex;
+    transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+    will-change: transform;
+}
+
+.carousel-slide-item {
+    flex: 0 0 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: 0 14px;
+    display: flex;
+    justify-content: center;
+}
+
+.carousel-slide-item .brochure-card {
+    max-width: 440px;
+    width: 100%;
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(0, 240, 255, 0.35);
+}
+
+.carousel-slide-item.active .brochure-card {
+    border-color: #00f0ff;
+    box-shadow: 0 0 35px rgba(0, 240, 255, 0.3);
+}
+
+.carousel-nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: rgba(14, 23, 46, 0.9);
+    border: 1.5px solid rgba(0, 240, 255, 0.4);
+    color: #00f0ff;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.25s ease;
+    backdrop-filter: blur(8px);
+}
+
+.carousel-nav-btn:hover {
+    background: #00f0ff;
+    color: #070d1e;
+    box-shadow: 0 0 25px rgba(0, 240, 255, 0.7);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.carousel-nav-btn.prev {
+    left: 8px;
+}
+
+.carousel-nav-btn.next {
+    right: 8px;
+}
+
+.carousel-dots {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 24px;
+}
+
+.carousel-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.25);
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0;
+}
+
+.carousel-dot.active {
+    width: 28px;
+    border-radius: 12px;
+    background: linear-gradient(90deg, #00d2ff, #0052cc);
+    box-shadow: 0 0 12px rgba(0, 210, 255, 0.6);
+}
+
+.carousel-counter {
+    text-align: center;
+    font-size: 12.5px;
+    color: #64748b;
+    margin-top: 10px;
+    font-weight: 600;
+}
+
 
 /* ==========================================================================
    OFFICIAL MEDIA CUSTOMER CARE SECTION (820, 08170123442, WA, EMAIL)

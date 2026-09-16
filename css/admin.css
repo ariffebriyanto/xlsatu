@@ -503,13 +503,14 @@ textarea.form-control {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.65);
+    background: rgba(0, 0, 0, 0.75);
     backdrop-filter: blur(4px);
     display: none;
     align-items: center;
     justify-content: center;
     z-index: 10000;
     padding: 20px;
+    overflow: hidden;
 }
 
 .admin-modal.show {
@@ -518,51 +519,98 @@ textarea.form-control {
 
 .admin-modal-dialog {
     background: white;
-    border-radius: 6px;
-    max-width: 600px;
+    border-radius: 12px;
+    max-width: 620px;
     width: 100%;
-    max-height: 90vh;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    height: 85vh;
+    max-height: 85vh;
+    display: flex !important;
+    flex-direction: column !important;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
     animation: modalIn 0.2s ease-out;
+    overflow: hidden !important;
+    position: relative;
+    margin: auto;
 }
 
 .admin-modal-header {
-    padding: 16px 20px;
+    padding: 14px 20px;
     border-bottom: 1px solid var(--wp-border);
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex: 0 0 auto !important;
+    flex-shrink: 0 !important;
+    background: #ffffff;
+    z-index: 20;
 }
 
 .admin-modal-header h3 {
     font-family: var(--font-heading);
-    font-size: 18px;
+    font-size: 16px;
     color: #1d2327;
+    margin: 0;
 }
 
 .modal-close-btn {
     background: none;
     border: none;
-    font-size: 20px;
+    font-size: 24px;
+    line-height: 1;
     cursor: pointer;
     color: #646970;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.modal-close-btn:hover {
+    background: #f0f0f1;
+    color: #d63638;
 }
 
 .admin-modal-body {
-    padding: 20px;
-    overflow-y: auto;
-    flex-grow: 1;
+    padding: 18px 20px;
+    overflow-y: auto !important;
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
 }
 
 .admin-modal-footer {
-    padding: 14px 20px;
+    padding: 12px 20px;
     border-top: 1px solid var(--wp-border);
     display: flex;
     justify-content: flex-end;
     gap: 10px;
-    background: #f6f7f7;
+    background: #ffffff;
+    flex: 0 0 auto !important;
+    flex-shrink: 0 !important;
+    position: sticky;
+    bottom: 0;
+    z-index: 20;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* 3-KOLOM GRID LIST BROSUR ADMIN */
+#admin-brochures-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+@media (max-width: 1024px) {
+    #admin-brochures-list {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+}
+
+@media (max-width: 640px) {
+    #admin-brochures-list {
+        grid-template-columns: 1fr;
+        gap: 14px;
+    }
 }
 
 /* ==========================================================================
@@ -646,6 +694,60 @@ textarea.form-control {
 
     .admin-content {
         padding: 16px;
+    }
+
+    /* Mobile Modal Optimization - Bottom-sheet with Sticky Save Button */
+    .admin-modal {
+        padding: 0 !important;
+        align-items: flex-end !important;
+    }
+
+    .admin-modal-dialog {
+        height: 92vh !important;
+        max-height: 92vh !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        border-radius: 16px 16px 0 0 !important;
+        margin: 0 !important;
+    }
+
+    .admin-modal-header {
+        padding: 12px 16px !important;
+        flex: 0 0 auto !important;
+        flex-shrink: 0 !important;
+    }
+
+    .admin-modal-header h3 {
+        font-size: 15px;
+    }
+
+    .admin-modal-body {
+        padding: 14px 16px !important;
+        flex: 1 1 auto !important;
+        min-height: 0 !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .admin-modal-footer {
+        padding: 12px 16px env(safe-area-inset-bottom, 12px) !important;
+        background: #ffffff !important;
+        gap: 10px !important;
+        flex: 0 0 auto !important;
+        flex-shrink: 0 !important;
+        position: sticky !important;
+        bottom: 0 !important;
+        z-index: 100 !important;
+        box-shadow: 0 -4px 14px rgba(0, 0, 0, 0.15) !important;
+    }
+
+    .admin-modal-footer .wp-btn {
+        flex: 1 !important;
+        padding: 12px 10px !important;
+        font-size: 13.5px !important;
+        font-weight: 700 !important;
+        justify-content: center !important;
+        min-height: 46px !important;
     }
 }
 

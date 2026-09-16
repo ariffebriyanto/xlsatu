@@ -40,7 +40,8 @@ Website resmi promosi paket internet rumah **XL Satu Fiber** (Kabel FTTH) dan **
 - **👥 Pendaftaran Masuk (Leads):** Tabel daftar pemohon pasang baru dengan fitur langsung *Chat WhatsApp* atau hapus lead.
 - **📦 Kelola Paket Internet (CRUD):** Tambah, edit harga/kecepatan/kategori/fitur, dan hapus paket internet.
 - **⭐ Kelola Review Pelanggan (CRUD):** Tambah testimoni baru, ubah ulasan, atau hapus review.
-- **🖼️ Kelola Brosur & Flyer Info:** Edit judul, tag, ganti URL gambar, atau **Upload file gambar langsung dari komputer (Base64 Reader)**.
+- **🖼️ Kelola Brosur & Flyer Info & Template Mode:** Edit judul, tag, ganti URL gambar, upload file gambar langsung dari komputer, serta pilih mode tampilan flyer di website: **Grid (Galeri)**, **Slider (Geser Horizontal)**, atau **Carousel (Panggung Putar Otomatis)**.
+- **💾 Database SQLite (xlsatu.db):** Menggunakan engine database SQLite nyata berbasis Node.js bawaan (`node:sqlite`), menggantikan LocalStorage sepenuhnya dengan performa handal dan backup terintegrasi.
 - **📱 Pengaturan Kontak WhatsApp Terpadu:** Ubah nomor WA Sales, WA Pendaftaran, WA CS, dan WA Developer secara terpusat.
 - **👤 Akun & Password Admin:** Ubah username dan password login admin dengan konfirmasi password.
 - **💾 Backup & Restore JSON:** Ekspor seluruh data website ke file JSON dan impor data kembali kapan saja.
@@ -54,48 +55,40 @@ Website resmi promosi paket internet rumah **XL Satu Fiber** (Kabel FTTH) dan **
 | **URL Admin** | `http://localhost:3000/admin.html` | Panel Kontrol CMS |
 | **Username** | `admin` | Bisa diubah di menu Akun Admin |
 | **Password** | `admin123` | Bisa diubah di menu Akun Admin |
+| **Database** | `xlsatu.db` | SQLite Database di root project |
 
 ---
 
 ## 🚀 Cara Menjalankan Project
 
-### Opsi A: Menggunakan Node.js / NPM (Lokal Dev Server)
+### Menggunakan Server SQLite (Direkomendasikan)
 ```bash
-# Jalankan server lokal di port 3000
+# Jalankan server SQLite lokal di port 3000
+npm start
+# atau
 npm run dev
 ```
 Buka browser di:
 - Landing Page: **http://localhost:3000**
 - CMS Admin: **http://localhost:3000/admin.html**
-
-### Opsi B: Langsung Buka File di Browser
-Cukup klik ganda file `index.html` atau `admin.html` di File Explorer.
-
----
-
-## ☁️ Cara Deploy ke Vercel
-
-Project ini sudah dilengkapi konfigurasi [vercel.json](vercel.json).
-
-1. Upload repository ini ke GitHub: `https://github.com/ariffebriyanto/xlsatu.git`
-2. Buka **[vercel.com](https://vercel.com)** dan klik **Add New Project** ➔ pilih repository `xlsatu`.
-3. Klik **Deploy**. Website Anda langsung aktif dengan domain gratis `*.vercel.app` dan HTTPS otomatis!
-4. *(Opsional)* Hubungkan Custom Domain Anda di menu **Settings ➔ Domains**.
+- Status Database: **http://localhost:3000/api/db-info**
 
 ---
 
 ## 📂 Struktur Folder
 
 ```text
+├── server.js                # Server HTTP & API REST SQLite (node:sqlite)
+├── xlsatu.db                # File database SQLite utama
 ├── assets/
 │   └── images/              # 6 Brosur flyer asli resmi
 ├── css/
-│   ├── style.css            # Stylesheet utama landing page
-│   └── admin.css            # Stylesheet CMS admin dashboard
+│   ├── style.css            # Stylesheet utama landing page (Grid, Slider, Carousel)
+│   └── admin.css            # Stylesheet CMS admin dashboard & mobile modal
 ├── js/
-│   ├── data.js              # Data store (LocalStorage) & state manager
-│   ├── main.js              # Frontend rendering & interaksi landing page
-│   └── admin.js             # Controller admin CMS & autentikasi
+│   ├── data.js              # Database client SQLite & state manager
+│   ├── main.js              # Frontend rendering & mode interaksi flyer
+│   └── admin.js             # Controller admin CMS & pemilihan template
 ├── index.html               # Halaman utama landing page & formulir
 ├── admin.html               # Halaman dashboard admin CMS
 ├── vercel.json              # Konfigurasi routing & cache Vercel

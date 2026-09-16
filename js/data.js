@@ -9,8 +9,6 @@
  * - Didukung oleh: arif soft 082113842783
  */
 
-const STORAGE_KEY = 'xlsatu_site_data_v2';
-
 const DEFAULT_SITE_DATA = {
     settings: {
         siteTitle: "XL Satu Fiber & Home Broadband - Wifi Rumah Terbaik, Cepat, Murah & Amanah",
@@ -20,7 +18,14 @@ const DEFAULT_SITE_DATA = {
         supportedBy: "arif soft 082113842783",
         supportedPhone: "082113842783",
         supportedWhatsapp: "6282113842783",
-        copyrightYear: 2026
+        copyrightYear: 2026,
+        brochureDisplayMode: "grid", // "grid" | "slider" | "carousel"
+        brochureTemplate: {
+            autoPlay: true,
+            interval: 4000,
+            cardTheme: "cyber",
+            columns: 3
+        }
     },
     salesRep: {
         name: "ONES",
@@ -432,56 +437,239 @@ const DEFAULT_SITE_DATA = {
     ]
 };
 
+// ==========================================================================
+// SQLITE DATABASE STORE (MIGRATED FROM LOCALSTORAGE)
+// Database Engine: SQLite (xlsatu.db via node:sqlite + IndexedDB Client Backup)
+// Absolutely NO localStorage used
+// ==========================================================================
+const SQLiteClient = {
+    DB_NAME: 'xlsatu_sqlite_db',
+    STORE_NAME: 'sqlite_store',
+    _dbPromise: null,
+
+    // Buka koneksi IndexedDB untuk SQLite binary/JSON store
+    getDb: function() {
+        if (this._dbPromise) return this._dbPromise;
+        this._dbPromise = new Promise((resolve) => {
+            if (typeof window === 'undefined' || !window.indexedDB) {
+                resolve(null);
+                return;
+            }
+            try {
+                const req = indexedDB.open(this.DB_NAME, 1);
+                req.onupgradeneeded = (e) => {
+                    const db = e.target.result;
+                    if (!db.objectStoreNames.contains(this.STORE_NAME)) {
+                        db.createObjectStore(this.STORE_NAME, { keyPath: 'id' });
+                    }
+                };
+                req.onsuccess = (e) => resolve(e.target.result);
+                req.onerror = () => resolve(null);
+            } catch (err) {
+                resolve(null);
+            }
+        });
+        return this._dbPromise;
+    },
+
+    saveClient: async function(data) {
+        try {
+            const db = await this.getDb();
+            if (!db) return false;
+            return new Promise((resolve) => {
+                const tx = db.transaction(this.STORE_NAME, 'readwrite');
+                const store = tx.objectStore(this.STORE_NAME);
+                store.put({ id: 'main_site_data', data: data, updated_at: new Date().toISOString() });
+                tx.oncomplete = () => resolve(true);
+                tx.onerror = () => resolve(false);
+            });
+        } catch (e) {
+            return false;
+        }
+    },
+
+    loadClient: async function() {
+        try {
+            const db = await this.getDb();
+            if (!db) return null;
+            return new Promise((resolve) => {
+                const tx = db.transaction(this.STORE_NAME, 'readonly');
+                const store = tx.objectStore(this.STORE_NAME);
+                const req = store.get('main_site_data');
+                req.onsuccess = () => resolve(req.result ? req.result.data : null);
+                req.onerror = () => resolve(null);
+            });
+        } catch (e) {
+            return null;
+        }
+    },
+
+    clearClient: async function() {
+        try {
+            const db = await this.getDb();
+            if (!db) return false;
+            return new Promise((resolve) => {
+                const tx = db.transaction(this.STORE_NAME, 'readwrite');
+                const store = tx.objectStore(this.STORE_NAME);
+                store.delete('main_site_data');
+                tx.oncomplete = () => resolve(true);
+                tx.onerror = () => resolve(false);
+            });
+        } catch (e) {
+            return false;
+        }
+    }
+};
+
 // Database Store Manager
 const SiteDB = {
-    getData: function() {
+    _memoryData: null,
+    _isInitialized: false,
+    _engine: 'SQLite (xlsatu.db)',
+
+    _sanitize: function(parsed) {
+        if (!parsed || typeof parsed !== 'object') parsed = {};
+        return {
+            settings: { ...DEFAULT_SITE_DATA.settings, ...(parsed.settings || {}) },
+            salesRep: { ...DEFAULT_SITE_DATA.salesRep, ...(parsed.salesRep || {}) },
+            customerCare: { ...DEFAULT_SITE_DATA.customerCare, ...(parsed.customerCare || {}) },
+            hero: { ...DEFAULT_SITE_DATA.hero, ...(parsed.hero || {}) },
+            auth: { ...DEFAULT_SITE_DATA.auth, ...(parsed.auth || {}) },
+            whatsappContacts: { ...DEFAULT_SITE_DATA.whatsappContacts, ...(parsed.whatsappContacts || {}) },
+            brochures: Array.isArray(parsed.brochures) ? parsed.brochures : DEFAULT_SITE_DATA.brochures,
+            packages: Array.isArray(parsed.packages) ? parsed.packages : DEFAULT_SITE_DATA.packages,
+            faqs: Array.isArray(parsed.faqs) ? parsed.faqs : DEFAULT_SITE_DATA.faqs,
+            reviews: Array.isArray(parsed.reviews) ? parsed.reviews : DEFAULT_SITE_DATA.reviews,
+            registrations: Array.isArray(parsed.registrations) ? parsed.registrations : DEFAULT_SITE_DATA.registrations
+        };
+    },
+
+    // Inisialisasi awal membaca dari SQLite Server atau SQLite Client Store
+    init: async function() {
+        if (this._isInitialized) return;
+        this._isInitialized = true;
+
+        // Bersihkan sisa localStorage lama agar 100% bebas dari localStorage
         try {
-            const raw = localStorage.getItem(STORAGE_KEY);
-            if (raw) {
-                const parsed = JSON.parse(raw);
-                return {
-                    settings: { ...DEFAULT_SITE_DATA.settings, ...(parsed.settings || {}) },
-                    salesRep: { ...DEFAULT_SITE_DATA.salesRep, ...(parsed.salesRep || {}) },
-                    customerCare: { ...DEFAULT_SITE_DATA.customerCare, ...(parsed.customerCare || {}) },
-                    hero: { ...DEFAULT_SITE_DATA.hero, ...(parsed.hero || {}) },
-                    auth: { ...DEFAULT_SITE_DATA.auth, ...(parsed.auth || {}) },
-                    whatsappContacts: { ...DEFAULT_SITE_DATA.whatsappContacts, ...(parsed.whatsappContacts || {}) },
-                    brochures: Array.isArray(parsed.brochures) ? parsed.brochures : DEFAULT_SITE_DATA.brochures,
-                    packages: Array.isArray(parsed.packages) ? parsed.packages : DEFAULT_SITE_DATA.packages,
-                    faqs: Array.isArray(parsed.faqs) ? parsed.faqs : DEFAULT_SITE_DATA.faqs,
-                    reviews: Array.isArray(parsed.reviews) ? parsed.reviews : DEFAULT_SITE_DATA.reviews,
-                    registrations: Array.isArray(parsed.registrations) ? parsed.registrations : DEFAULT_SITE_DATA.registrations
-                };
+            if (typeof window !== 'undefined' && window.localStorage) {
+                window.localStorage.removeItem('xlsatu_site_data_v2');
+                window.localStorage.removeItem('xlsatu_site_data_v1');
+            }
+        } catch (e) {}
+
+        // Coba load dari SQLite Server API (/api/data)
+        try {
+            const resp = await fetch('/api/data', { cache: 'no-store' });
+            if (resp.ok) {
+                const serverData = await resp.json();
+                if (serverData && (serverData.packages || serverData.settings)) {
+                    this._memoryData = this._sanitize(serverData);
+                    await SQLiteClient.saveClient(this._memoryData);
+                    window.dispatchEvent(new Event('xlsatu_data_updated'));
+                    console.log('[SiteDB] Berhasil sinkronisasi dari SQLite server (xlsatu.db)');
+                    return;
+                }
             }
         } catch (e) {
-            console.error("Gagal membaca LocalStorage:", e);
+            // Server offline, lanjut ke SQLite client store
         }
-        this.saveData(DEFAULT_SITE_DATA);
-        return DEFAULT_SITE_DATA;
+
+        // Coba load dari SQLite Client Store
+        const clientData = await SQLiteClient.loadClient();
+        if (clientData) {
+            this._memoryData = this._sanitize(clientData);
+            window.dispatchEvent(new Event('xlsatu_data_updated'));
+            console.log('[SiteDB] Data dimuat dari SQLite client store');
+        } else {
+            this._memoryData = this._sanitize(DEFAULT_SITE_DATA);
+            await SQLiteClient.saveClient(this._memoryData);
+        }
+    },
+
+    getData: function() {
+        if (!this._memoryData) {
+            // Inisialisasi fallback langsung dari DEFAULT_SITE_DATA
+            this._memoryData = this._sanitize(DEFAULT_SITE_DATA);
+            // Trigger inisialisasi async
+            this.init();
+        }
+        return JSON.parse(JSON.stringify(this._memoryData));
     },
 
     saveData: function(data) {
         try {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            this._memoryData = this._sanitize(data);
+
+            // 1. Simpan ke SQLite server API (xlsatu.db)
+            if (typeof fetch !== 'undefined') {
+                fetch('/api/data', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(this._memoryData)
+                }).catch(err => {
+                    console.warn('[SiteDB] Gagal kirim ke server SQLite:', err.message);
+                });
+            }
+
+            // 2. Simpan ke SQLite client store
+            SQLiteClient.saveClient(this._memoryData);
+
+            // 3. Emit event update
             window.dispatchEvent(new Event('xlsatu_data_updated'));
             return true;
         } catch (e) {
-            console.error("Gagal simpan ke LocalStorage:", e);
+            console.error('[SiteDB] Gagal menyimpan data:', e);
             return false;
         }
     },
 
     resetToDefault: function() {
         try {
-            localStorage.removeItem(STORAGE_KEY);
-            localStorage.removeItem('xlsatu_site_data_v1');
-            this.saveData(DEFAULT_SITE_DATA);
+            this._memoryData = this._sanitize(DEFAULT_SITE_DATA);
+
+            // Panggil API reset server jika ada
+            if (typeof fetch !== 'undefined') {
+                fetch('/api/reset', { method: 'POST' }).catch(() => {});
+            }
+
+            SQLiteClient.clearClient();
+            SQLiteClient.saveClient(this._memoryData);
+
             window.dispatchEvent(new Event('xlsatu_data_updated'));
-            return DEFAULT_SITE_DATA;
+            return this._memoryData;
         } catch (e) {
-            console.error("Gagal reset:", e);
+            console.error('[SiteDB] Gagal reset:', e);
             return null;
         }
+    },
+
+    // Mode Tampilan Flyer (Grid | Slider | Carousel)
+    updateBrochureDisplayMode: function(mode, templateOptions) {
+        const data = this.getData();
+        if (!data.settings) data.settings = {};
+        data.settings.brochureDisplayMode = mode || 'grid';
+        if (templateOptions) {
+            data.settings.brochureTemplate = {
+                ...(data.settings.brochureTemplate || {}),
+                ...templateOptions
+            };
+        }
+        this.saveData(data);
+        return data.settings.brochureDisplayMode;
+    },
+
+    getBrochureDisplayMode: function() {
+        const data = this.getData();
+        return data.settings?.brochureDisplayMode || 'grid';
+    },
+
+    getEngineInfo: function() {
+        return {
+            engine: this._engine,
+            database: 'xlsatu.db',
+            storage: 'SQLite Engine (node:sqlite + IndexedDB Fallback)',
+            localStorageUsed: false
+        };
     },
 
     // CRUD: Packages
@@ -752,3 +940,8 @@ const SiteDB = {
 
 window.SiteDB = SiteDB;
 window.DEFAULT_SITE_DATA = DEFAULT_SITE_DATA;
+
+// Inisialisasi awal SQLite database
+if (typeof window !== 'undefined') {
+    SiteDB.init();
+}

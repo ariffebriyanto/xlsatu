@@ -85,8 +85,8 @@ function initLuxuryLandingPage() {
     // Render Reviews / Kata Mereka
     renderReviews(data.reviews || window.DEFAULT_SITE_DATA.reviews);
 
-    // Render Brochures Gallery (All 6 images from folder iwan)
-    renderBrochuresGallery(data.brochures || window.DEFAULT_SITE_DATA.brochures);
+    // Render Brochures Gallery (Grid / Slider / Carousel Mode)
+    renderBrochuresGallery(data.brochures || window.DEFAULT_SITE_DATA.brochures, data.settings?.brochureDisplayMode, data.settings?.brochureTemplate);
 
     // Render Customer Care Official Contacts
     renderCustomerCareCards(data.customerCare);
@@ -397,14 +397,45 @@ window.handleUserReviewSubmit = function(e) {
 };
 
 // ==========================================================================
-// RENDER BROCHURES GALLERY (ALL 6 FLYERS FROM FOLDER IWAN)
+// RENDER BROCHURES GALLERY (GRID / SLIDER / CAROUSEL DYNAMIC MODES)
 // ==========================================================================
-function renderBrochuresGallery(brochures) {
+window._carouselState = {
+    currentIndex: 0,
+    timer: null,
+    totalSlides: 0,
+    autoPlay: true,
+    interval: 4000
+};
+
+function renderBrochuresGallery(brochures, preferredMode, templateOpts) {
     const container = document.getElementById('brochures-gallery-container');
     if (!container) return;
 
-    container.innerHTML = brochures.map((b) => `
-        <div class="brochure-card" onclick="openBrochureModal('${escapeHtml(b.image)}', '${escapeHtml(b.title)}', '${escapeHtml(b.desc)}')">
+    if (!Array.isArray(brochures) || brochures.length === 0) {
+        container.innerHTML = `<p style="text-align: center; color: #94a3b8;">Belum ada flyer yang tersedia.</p>`;
+        return;
+    }
+
+    const mode = window._currentFlyerDisplayMode || preferredMode || SiteDB.getBrochureDisplayMode() || 'grid';
+    const tpl = templateOpts || SiteDB.getData().settings?.brochureTemplate || { autoPlay: true, interval: 4000 };
+
+    // Update active toolbar button
+    ['grid', 'slider', 'carousel'].forEach(m => {
+        const btn = document.getElementById(`btn-mode-${m}`);
+        if (btn) {
+            btn.classList.toggle('active', m === mode);
+        }
+    });
+
+    // Clear existing carousel auto-play timer
+    if (window._carouselState.timer) {
+        clearInterval(window._carouselState.timer);
+        window._carouselState.timer = null;
+    }
+
+    // Helper card HTML
+    const renderCardHtml = (b, extraClass = '') => `
+        <div class="brochure-card ${extraClass}" onclick="openBrochureModal('${escapeHtml(b.image)}', '${escapeHtml(b.title)}', '${escapeHtml(b.desc)}')">
             <div class="brochure-thumb-wrap">
                 <img src="${escapeHtml(b.image)}" alt="${escapeHtml(b.title)}" loading="lazy">
                 <div class="brochure-tag-badge">${escapeHtml(b.tag || 'Brosur Resmi')}</div>
@@ -419,7 +450,152 @@ function renderBrochuresGallery(brochures) {
                 </div>
             </div>
         </div>
-    `).join('');
+    `;
+
+    // 1. MODE GRID
+    if (mode === 'grid') {
+        container.className = 'gallery-grid';
+        container.innerHTML = brochures.map(b => renderCardHtml(b)).join('');
+        return;
+    }
+
+    // 2. MODE SLIDER (Horizontal Touch / Arrow Drag)
+    if (mode === 'slider') {
+        container.className = '';
+        container.innerHTML = `
+            <div class="flyer-slider-wrapper">
+                <button type="button" class="slider-arrow-btn prev" onclick="scrollFlyerSlider(-1)" aria-label="Geser ke kiri">
+                    <i class="bi bi-chevron-left"></i>
+                </button>
+                <div class="flyer-slider-track" id="flyer-slider-track">
+                    ${brochures.map(b => renderCardHtml(b)).join('')}
+                </div>
+                <button type="button" class="slider-arrow-btn next" onclick="scrollFlyerSlider(1)" aria-label="Geser ke kanan">
+                    <i class="bi bi-chevron-right"></i>
+                </button>
+            </div>
+        `;
+        return;
+    }
+
+    // 3. MODE CAROUSEL (Rotasi Otomatis & Dot Navigasi)
+    if (mode === 'carousel') {
+        container.className = '';
+        window._carouselState.totalSlides = brochures.length;
+        window._carouselState.currentIndex = 0;
+        window._carouselState.autoPlay = tpl.autoPlay !== false;
+        window._carouselState.interval = parseInt(tpl.interval || 4000, 10);
+
+        container.innerHTML = `
+            <div class="flyer-carousel-wrapper" id="flyer-carousel-wrap">
+                <div class="carousel-stage">
+                    <button type="button" class="carousel-nav-btn prev" onclick="navigateFlyerCarousel(-1)" aria-label="Slide sebelumnya">
+                        <i class="bi bi-chevron-left"></i>
+                    </button>
+                    <div class="carousel-track" id="carousel-track">
+                        ${brochures.map((b, idx) => `
+                            <div class="carousel-slide-item ${idx === 0 ? 'active' : ''}" data-index="${idx}">
+                                ${renderCardHtml(b)}
+                            </div>
+                        `).join('')}
+                    </div>
+                    <button type="button" class="carousel-nav-btn next" onclick="navigateFlyerCarousel(1)" aria-label="Slide berikutnya">
+                        <i class="bi bi-chevron-right"></i>
+                    </button>
+                </div>
+                <div class="carousel-dots" id="carousel-dots-container">
+                    ${brochures.map((_, idx) => `
+                        <button type="button" class="carousel-dot ${idx === 0 ? 'active' : ''}" onclick="setFlyerCarouselSlide(${idx})" aria-label="Slide ${idx + 1}"></button>
+                    `).join('')}
+                </div>
+                <div class="carousel-counter" id="carousel-slide-counter">
+                    Slide 1 dari ${brochures.length}
+                </div>
+            </div>
+        `;
+
+        // Start Auto Play if enabled
+        if (window._carouselState.autoPlay && brochures.length > 1) {
+            startFlyerCarouselTimer();
+            const wrap = document.getElementById('flyer-carousel-wrap');
+            if (wrap) {
+                wrap.addEventListener('mouseenter', stopFlyerCarouselTimer);
+                wrap.addEventListener('mouseleave', startFlyerCarouselTimer);
+                wrap.addEventListener('touchstart', stopFlyerCarouselTimer, { passive: true });
+                wrap.addEventListener('touchend', startFlyerCarouselTimer, { passive: true });
+            }
+        }
+        return;
+    }
+}
+
+// Handler Ganti Mode Tampilan Flyer dari Landing Page
+window.switchPublicFlyerMode = function(mode) {
+    window._currentFlyerDisplayMode = mode;
+    const data = SiteDB.getData();
+    renderBrochuresGallery(data.brochures || window.DEFAULT_SITE_DATA.brochures, mode, data.settings?.brochureTemplate);
+};
+
+// Navigasi Mode Slider
+window.scrollFlyerSlider = function(direction) {
+    const track = document.getElementById('flyer-slider-track');
+    if (!track) return;
+    const scrollAmount = 340 * direction;
+    track.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+};
+
+// Navigasi Mode Carousel
+window.navigateFlyerCarousel = function(direction) {
+    const total = window._carouselState.totalSlides;
+    if (total <= 1) return;
+    let nextIdx = window._carouselState.currentIndex + direction;
+    if (nextIdx >= total) nextIdx = 0;
+    if (nextIdx < 0) nextIdx = total - 1;
+    window.setFlyerCarouselSlide(nextIdx);
+};
+
+window.setFlyerCarouselSlide = function(index) {
+    const total = window._carouselState.totalSlides;
+    if (index < 0 || index >= total) return;
+    window._carouselState.currentIndex = index;
+
+    const track = document.getElementById('carousel-track');
+    if (track) {
+        track.style.transform = `translateX(-${index * 100}%)`;
+    }
+
+    // Update active slides
+    const slides = document.querySelectorAll('.carousel-slide-item');
+    slides.forEach((s, idx) => {
+        s.classList.toggle('active', idx === index);
+    });
+
+    // Update active dots
+    const dots = document.querySelectorAll('.carousel-dot');
+    dots.forEach((d, idx) => {
+        d.classList.toggle('active', idx === index);
+    });
+
+    // Update counter
+    const counter = document.getElementById('carousel-slide-counter');
+    if (counter) {
+        counter.textContent = `Slide ${index + 1} dari ${total}`;
+    }
+};
+
+function startFlyerCarouselTimer() {
+    stopFlyerCarouselTimer();
+    if (!window._carouselState.autoPlay || window._carouselState.totalSlides <= 1) return;
+    window._carouselState.timer = setInterval(() => {
+        window.navigateFlyerCarousel(1);
+    }, window._carouselState.interval || 4000);
+}
+
+function stopFlyerCarouselTimer() {
+    if (window._carouselState.timer) {
+        clearInterval(window._carouselState.timer);
+        window._carouselState.timer = null;
+    }
 }
 
 // ==========================================================================

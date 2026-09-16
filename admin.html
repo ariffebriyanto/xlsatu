@@ -8,7 +8,7 @@
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <!-- Admin CSS -->
-    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="css/admin.css?v=4.0">
 </head>
 <body>
 
@@ -132,6 +132,9 @@
                 </span>
             </div>
             <div class="topbar-right" style="display: flex; align-items: center; gap: 12px;">
+                <span class="wp-badge" style="background: #059669; color: white; font-weight: 700; display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px; border-radius: 6px; font-size: 11.5px;" title="Database tersimpan di xlsatu.db menggunakan SQLite">
+                    <i class="bi bi-database-fill-check"></i> SQLite (xlsatu.db)
+                </span>
                 <a href="index.html" target="_blank" class="btn-visit-site">
                     <i class="bi bi-box-arrow-up-right"></i> Lihat Website Utama
                 </a>
@@ -356,6 +359,104 @@
                             <i class="bi bi-plus-circle"></i> Tambah Flyer / Info Baru
                         </button>
                     </div>
+                </div>
+
+                <!-- KARTU PENGATURAN TEMPLATE & MODE TAMPILAN FLYER (GRID / SLIDER / CAROUSEL) -->
+                <div class="admin-card" style="margin-bottom: 24px; border-left: 4px solid #2271b1;">
+                    <div class="admin-card-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                        <div class="admin-card-title">
+                            <i class="bi bi-layout-text-window-reverse"></i> Pengaturan Template & Mode Tampilan Flyer Website
+                        </div>
+                        <span class="wp-badge wp-badge-primary" id="badge-active-mode-flyer" style="font-size: 12px; padding: 4px 10px;">
+                            Aktif: Mode Grid
+                        </span>
+                    </div>
+                    <div class="admin-card-body">
+                        <p style="color: #646970; font-size: 13px; margin-bottom: 16px;">
+                            Pilih model tata letak brosur & info flyer di halaman pengunjung website utama (Landing Page). Anda bebas memilih antara Grid, Slider geser, atau Carousel panggung otomatis:
+                        </p>
+                        
+                        <!-- Pilihan 3 Mode Interaktif -->
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin-bottom: 18px;">
+                            <!-- Option 1: Grid -->
+                            <div class="flyer-mode-card" id="card-mode-grid" onclick="selectFlyerMode('grid')" style="border: 2px solid #2271b1; background: #f0f7fc; border-radius: 8px; padding: 14px; cursor: pointer; transition: all 0.2s;">
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                    <input type="radio" name="flyer-mode-radio" id="radio-mode-grid" value="grid" checked>
+                                    <label for="radio-mode-grid" style="font-weight: 700; color: #1e293b; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                                        <i class="bi bi-grid-3x3-gap-fill" style="color: #2271b1; font-size: 16px;"></i> 1. Mode Grid (Galeri)
+                                    </label>
+                                </div>
+                                <p style="font-size: 12px; color: #64748b; margin: 0; line-height: 1.4;">
+                                    Seluruh flyer dijejerkan dalam kolom kartu rapi dan interaktif. Pengunjung dapat melihat semua promo sekaligus.
+                                </p>
+                            </div>
+
+                            <!-- Option 2: Slider -->
+                            <div class="flyer-mode-card" id="card-mode-slider" onclick="selectFlyerMode('slider')" style="border: 2px solid #dcdcde; background: #ffffff; border-radius: 8px; padding: 14px; cursor: pointer; transition: all 0.2s;">
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                    <input type="radio" name="flyer-mode-radio" id="radio-mode-slider" value="slider">
+                                    <label for="radio-mode-slider" style="font-weight: 700; color: #1e293b; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                                        <i class="bi bi-sliders2-vertical" style="color: #0284c7; font-size: 16px;"></i> 2. Mode Slider (Geser)
+                                    </label>
+                                </div>
+                                <p style="font-size: 12px; color: #64748b; margin: 0; line-height: 1.4;">
+                                    Slide horizontal hemat tempat dengan tombol panah Kiri/Kanan & swipe sentuh jari di HP.
+                                </p>
+                            </div>
+
+                            <!-- Option 3: Carousel -->
+                            <div class="flyer-mode-card" id="card-mode-carousel" onclick="selectFlyerMode('carousel')" style="border: 2px solid #dcdcde; background: #ffffff; border-radius: 8px; padding: 14px; cursor: pointer; transition: all 0.2s;">
+                                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                                    <input type="radio" name="flyer-mode-radio" id="radio-mode-carousel" value="carousel">
+                                    <label for="radio-mode-carousel" style="font-weight: 700; color: #1e293b; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                                        <i class="bi bi-collection-play-fill" style="color: #d97706; font-size: 16px;"></i> 3. Mode Carousel (Panggung)
+                                    </label>
+                                </div>
+                                <p style="font-size: 12px; color: #64748b; margin: 0; line-height: 1.4;">
+                                    Tampilan slide putar otomatis (Auto-play) bergengsi dengan preview fokus, tombol navigasi, dan indikator titik.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Opsi Tambahan Template -->
+                        <div class="form-grid" style="padding-top: 14px; border-top: 1px dashed #dcdcde;">
+                            <div class="form-group">
+                                <label>Putar Otomatis (Auto-Play Carousel)</label>
+                                <select class="form-control" id="input-flyer-autoplay">
+                                    <option value="true" selected>Aktif (Slide berganti otomatis)</option>
+                                    <option value="false">Mati (Hanya berganti saat diklik)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Kecepatan Rotasi Slide</label>
+                                <select class="form-control" id="input-flyer-interval">
+                                    <option value="3000">Cepat (3 Detik)</option>
+                                    <option value="4000" selected>Normal (4 Detik)</option>
+                                    <option value="6000">Santai (6 Detik)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Gaya Bingkai & Efek Flyer</label>
+                                <select class="form-control" id="input-flyer-theme">
+                                    <option value="cyber" selected>Cyber Luxury (Sian Neon Glow)</option>
+                                    <option value="glass">Glassmorphism Transparan</option>
+                                    <option value="minimal">Minimalis Elegan Modern</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 16px; display: flex; justify-content: flex-end;">
+                            <button type="button" class="wp-btn wp-btn-primary" onclick="saveFlyerTemplateMode(event)">
+                                <i class="bi bi-check2-circle"></i> Terapkan & Simpan Mode Tampilan ke SQLite
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="page-header" style="margin-top: 20px; margin-bottom: 12px;">
+                    <h3 style="font-size: 16px; color: #1e293b; margin: 0;">
+                        <i class="bi bi-card-image"></i> Daftar Materi Flyer & Brosur
+                    </h3>
                 </div>
 
                 <div id="admin-brochures-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
@@ -684,211 +785,223 @@
          MODAL: TAMBAH / EDIT PAKET LAYANAN (FULL CRUD)
          ========================================================================== -->
     <div class="admin-modal" id="modal-package">
-        <div class="admin-modal-dialog">
+        <form id="form-package-crud" class="admin-modal-dialog" onsubmit="handleSavePackage(event)">
+            <input type="hidden" id="pkg-edit-id">
             <div class="admin-modal-header">
                 <h3 id="modal-package-title">Tambah Paket Baru</h3>
-                <button class="modal-close-btn" onclick="closePackageModal()">&times;</button>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <button type="submit" class="wp-btn wp-btn-primary wp-btn-sm" style="font-weight: 700; padding: 6px 14px; font-size: 13px;">
+                        <i class="bi bi-save"></i> Simpan
+                    </button>
+                    <button type="button" class="modal-close-btn" onclick="closePackageModal()">&times;</button>
+                </div>
             </div>
-            <form id="form-package-crud" onsubmit="handleSavePackage(event)">
-                <input type="hidden" id="pkg-edit-id">
-                <div class="admin-modal-body">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>Nama Paket</label>
-                            <input type="text" class="form-control" id="pkg-name" placeholder="Contoh: SPARK 150" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Kategori Paket</label>
-                            <select class="form-control" id="pkg-category" required>
-                                <option value="promo4bln">Promo Bayar 4 Bulan Langsung</option>
-                                <option value="ftth" selected>Kabel FTTH Fiber Optik</option>
-                                <option value="wireless">Wifi Rumah Tanpa Kabel</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>Kecepatan Internet</label>
-                            <input type="text" class="form-control" id="pkg-speed" placeholder="Contoh: Up to 350 Mbps" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Harga Tampil</label>
-                            <input type="text" class="form-control" id="pkg-price" placeholder="Contoh: Rp 309.000" required>
-                        </div>
-                    </div>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>Periode Pembayaran</label>
-                            <input type="text" class="form-control" id="pkg-period" placeholder="/bulan atau untuk 4 bulan">
-                        </div>
-                        <div class="form-group">
-                            <label>Keterangan Setara Per Bulan (Opsional)</label>
-                            <input type="text" class="form-control" id="pkg-monthly-eq" placeholder="Contoh: Setara Rp 180.000 / bln">
-                        </div>
-                    </div>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>Bonus Kuota HP / Informasi PPN</label>
-                            <input type="text" class="form-control" id="pkg-quota" placeholder="Contoh: Termasuk PPN 11% atau Kuota 8GB">
-                        </div>
-                        <div class="form-group">
-                            <label>Badge Promo</label>
-                            <input type="text" class="form-control" id="pkg-badge" placeholder="Contoh: FAVORIT KELUARGA">
-                        </div>
-                    </div>
-                    <div class="form-group" style="display: flex; align-items: center; gap: 8px;">
-                        <input type="checkbox" id="pkg-is-popular" style="width: 18px; height: 18px;">
-                        <label for="pkg-is-popular" style="margin: 0; cursor: pointer;">Tandai sebagai Paket Unggulan (Highlighted)</label>
+            <div class="admin-modal-body">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Nama Paket</label>
+                        <input type="text" class="form-control" id="pkg-name" placeholder="Contoh: SPARK 150" required>
                     </div>
                     <div class="form-group">
-                        <label>Fitur & Benefit (Pisahkan dengan baris baru)</label>
-                        <textarea class="form-control" id="pkg-features" rows="4" placeholder="Kecepatan Fiber Stabil&#10;Unlimited Tanpa FUP&#10;Gratis Sewa Router&#10;Layanan 24 Jam"></textarea>
+                        <label>Kategori Paket</label>
+                        <select class="form-control" id="pkg-category" required>
+                            <option value="promo4bln">Promo Bayar 4 Bulan Langsung</option>
+                            <option value="ftth" selected>Kabel FTTH Fiber Optik</option>
+                            <option value="wireless">Wifi Rumah Tanpa Kabel</option>
+                        </select>
                     </div>
                 </div>
-                <div class="admin-modal-footer">
-                    <button type="button" class="wp-btn wp-btn-secondary" onclick="closePackageModal()">Batal</button>
-                    <button type="submit" class="wp-btn wp-btn-primary">
-                        <i class="bi bi-save"></i> Simpan Data Paket
-                    </button>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Kecepatan Internet</label>
+                        <input type="text" class="form-control" id="pkg-speed" placeholder="Contoh: Up to 350 Mbps" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Harga Tampil</label>
+                        <input type="text" class="form-control" id="pkg-price" placeholder="Contoh: Rp 309.000" required>
+                    </div>
                 </div>
-            </form>
-        </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Periode Pembayaran</label>
+                        <input type="text" class="form-control" id="pkg-period" placeholder="/bulan atau untuk 4 bulan">
+                    </div>
+                    <div class="form-group">
+                        <label>Keterangan Setara Per Bulan (Opsional)</label>
+                        <input type="text" class="form-control" id="pkg-monthly-eq" placeholder="Contoh: Setara Rp 180.000 / bln">
+                    </div>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Bonus Kuota HP / Informasi PPN</label>
+                        <input type="text" class="form-control" id="pkg-quota" placeholder="Contoh: Termasuk PPN 11% atau Kuota 8GB">
+                    </div>
+                    <div class="form-group">
+                        <label>Badge Promo</label>
+                        <input type="text" class="form-control" id="pkg-badge" placeholder="Contoh: FAVORIT KELUARGA">
+                    </div>
+                </div>
+                <div class="form-group" style="display: flex; align-items: center; gap: 8px;">
+                    <input type="checkbox" id="pkg-is-popular" style="width: 18px; height: 18px;">
+                    <label for="pkg-is-popular" style="margin: 0; cursor: pointer;">Tandai sebagai Paket Unggulan (Highlighted)</label>
+                </div>
+                <div class="form-group">
+                    <label>Fitur & Benefit (Pisahkan dengan baris baru)</label>
+                    <textarea class="form-control" id="pkg-features" rows="4" placeholder="Kecepatan Fiber Stabil&#10;Unlimited Tanpa FUP&#10;Gratis Sewa Router&#10;Layanan 24 Jam"></textarea>
+                </div>
+            </div>
+            <div class="admin-modal-footer">
+                <button type="button" class="wp-btn wp-btn-secondary" onclick="closePackageModal()">Batal</button>
+                <button type="submit" class="wp-btn wp-btn-primary">
+                    <i class="bi bi-save"></i> Simpan Data Paket
+                </button>
+            </div>
+        </form>
     </div>
 
     <!-- ==========================================================================
          MODAL: TAMBAH / EDIT BROSUR & FLYER INFO (BISA EDIT / UPLOAD GAMBAR)
          ========================================================================== -->
     <div class="admin-modal" id="modal-brochure">
-        <div class="admin-modal-dialog">
+        <form id="form-brochure-crud" class="admin-modal-dialog" onsubmit="handleSaveBrochure(event)">
+            <input type="hidden" id="brochure-edit-id">
             <div class="admin-modal-header">
                 <h3 id="modal-brochure-title">Edit Materi Brosur & Flyer Info</h3>
-                <button class="modal-close-btn" onclick="closeBrochureModal()">&times;</button>
-            </div>
-            <form id="form-brochure-crud" onsubmit="handleSaveBrochure(event)">
-                <input type="hidden" id="brochure-edit-id">
-                <div class="admin-modal-body">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>Judul Brosur / Info Flyer</label>
-                            <input type="text" class="form-control" id="brochure-title" placeholder="Contoh: Promo Hemat Bayar 4 Bulan" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Tag / Label Kategori</label>
-                            <input type="text" class="form-control" id="brochure-tag" placeholder="Contoh: Hero Promo, Special Promo, Paket FTTH" required>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label>URL Gambar atau Path</label>
-                        <input type="text" class="form-control" id="brochure-image-url" placeholder="assets/images/hero-wifi-terbaik.jpeg atau link URL gambar" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Atau Pilih File Gambar dari Komputer (Upload Langsung)</label>
-                        <input type="file" id="brochure-file-input" accept="image/*" class="form-control" onchange="previewBrochureFile(this)">
-                        <div class="form-help">Pilih file JPG/PNG dari komputer untuk mengganti gambar flyer secara instan.</div>
-                    </div>
-
-                    <!-- Image Preview -->
-                    <div class="form-group" id="brochure-preview-box" style="text-align: center; background: #000; padding: 10px; border-radius: 6px; display: none;">
-                        <img id="brochure-preview-img" src="" alt="Preview" style="max-height: 180px; max-width: 100%; object-fit: contain;">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Deskripsi Brosur / Penjelasan Info</label>
-                        <textarea class="form-control" id="brochure-desc" rows="3" placeholder="Jelaskan rincian promo atau informasi flyer ini..." required></textarea>
-                    </div>
-                </div>
-                <div class="admin-modal-footer">
-                    <button type="button" class="wp-btn wp-btn-secondary" onclick="closeBrochureModal()">Batal</button>
-                    <button type="submit" class="wp-btn wp-btn-primary">
-                        <i class="bi bi-save"></i> Simpan Flyer Info
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <button type="submit" class="wp-btn wp-btn-primary wp-btn-sm" style="font-weight: 700; padding: 6px 14px; font-size: 13px;">
+                        <i class="bi bi-save"></i> Simpan
                     </button>
+                    <button type="button" class="modal-close-btn" onclick="closeBrochureModal()">&times;</button>
                 </div>
-            </form>
-        </div>
+            </div>
+            <div class="admin-modal-body">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Judul Brosur / Info Flyer</label>
+                        <input type="text" class="form-control" id="brochure-title" placeholder="Contoh: Promo Hemat Bayar 4 Bulan" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Tag / Label Kategori</label>
+                        <input type="text" class="form-control" id="brochure-tag" placeholder="Contoh: Hero Promo, Special Promo, Paket FTTH" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>URL Gambar atau Path</label>
+                    <input type="text" class="form-control" id="brochure-image-url" placeholder="assets/images/hero-wifi-terbaik.jpeg atau link URL gambar" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Atau Pilih File Gambar dari Komputer (Upload Langsung)</label>
+                    <input type="file" id="brochure-file-input" accept="image/*" class="form-control" onchange="previewBrochureFile(this)">
+                    <div class="form-help">Pilih file JPG/PNG dari komputer untuk mengganti gambar flyer secara instan.</div>
+                </div>
+
+                <!-- Image Preview -->
+                <div class="form-group" id="brochure-preview-box" style="text-align: center; background: #000; padding: 10px; border-radius: 6px; display: none;">
+                    <img id="brochure-preview-img" src="" alt="Preview" style="max-height: 140px; max-width: 100%; object-fit: contain;">
+                </div>
+
+                <div class="form-group">
+                    <label>Deskripsi Brosur / Penjelasan Info</label>
+                    <textarea class="form-control" id="brochure-desc" rows="3" placeholder="Jelaskan rincian promo atau informasi flyer ini..." required></textarea>
+                </div>
+            </div>
+            <div class="admin-modal-footer">
+                <button type="button" class="wp-btn wp-btn-secondary" onclick="closeBrochureModal()">Batal</button>
+                <button type="submit" class="wp-btn wp-btn-primary" style="font-weight: 700;">
+                    <i class="bi bi-save"></i> Simpan Flyer Info
+                </button>
+            </div>
+        </form>
     </div>
 
     <!-- ==========================================================================
          MODAL: TAMBAH / EDIT REVIEW PELANGGAN (KATA MEREKA)
          ========================================================================== -->
     <div class="admin-modal" id="modal-review">
-        <div class="admin-modal-dialog">
+        <form id="form-review-crud" class="admin-modal-dialog" onsubmit="handleSaveReviewAdmin(event)">
+            <input type="hidden" id="review-edit-id">
             <div class="admin-modal-header">
                 <h3 id="modal-review-title">Tambah Review Pelanggan</h3>
-                <button class="modal-close-btn" onclick="closeReviewAdminModal()">&times;</button>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <button type="submit" class="wp-btn wp-btn-primary wp-btn-sm" style="font-weight: 700; padding: 6px 14px; font-size: 13px;">
+                        <i class="bi bi-save"></i> Simpan
+                    </button>
+                    <button type="button" class="modal-close-btn" onclick="closeReviewAdminModal()">&times;</button>
+                </div>
             </div>
-            <form id="form-review-crud" onsubmit="handleSaveReviewAdmin(event)">
-                <input type="hidden" id="review-edit-id">
-                <div class="admin-modal-body">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>Nama Pelanggan</label>
-                            <input type="text" class="form-control" id="admin-rev-name" placeholder="Contoh: Budi Santoso" required>
-                        </div>
-                        <div class="form-group">
-                            <label>Kota / Area</label>
-                            <input type="text" class="form-control" id="admin-rev-city" placeholder="Contoh: Rungkut, Surabaya" required>
-                        </div>
-                    </div>
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>Paket yang Digunakan</label>
-                            <input type="text" class="form-control" id="admin-rev-package" placeholder="Contoh: SPARK 150 (Up to 350 Mbps)">
-                        </div>
-                        <div class="form-group">
-                            <label>Rating Bintang</label>
-                            <select class="form-control" id="admin-rev-rating">
-                                <option value="5" selected>5 Bintang (⭐⭐⭐⭐⭐)</option>
-                                <option value="4">4 Bintang (⭐⭐⭐⭐)</option>
-                                <option value="3">3 Bintang (⭐⭐⭐)</option>
-                            </select>
-                        </div>
+            <div class="admin-modal-body">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Nama Pelanggan</label>
+                        <input type="text" class="form-control" id="admin-rev-name" placeholder="Contoh: Budi Santoso" required>
                     </div>
                     <div class="form-group">
-                        <label>Ulasan / Komentar Testimoni</label>
-                        <textarea class="form-control" id="admin-rev-comment" rows="4" placeholder="Tuliskan pengalaman pelanggan..." required></textarea>
+                        <label>Kota / Area</label>
+                        <input type="text" class="form-control" id="admin-rev-city" placeholder="Contoh: Rungkut, Surabaya" required>
                     </div>
                 </div>
-                <div class="admin-modal-footer">
-                    <button type="button" class="wp-btn wp-btn-secondary" onclick="closeReviewAdminModal()">Batal</button>
-                    <button type="submit" class="wp-btn wp-btn-primary">
-                        <i class="bi bi-save"></i> Simpan Review
-                    </button>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Paket yang Digunakan</label>
+                        <input type="text" class="form-control" id="admin-rev-package" placeholder="Contoh: SPARK 150 (Up to 350 Mbps)">
+                    </div>
+                    <div class="form-group">
+                        <label>Rating Bintang</label>
+                        <select class="form-control" id="admin-rev-rating">
+                            <option value="5" selected>5 Bintang (⭐⭐⭐⭐⭐)</option>
+                            <option value="4">4 Bintang (⭐⭐⭐⭐)</option>
+                            <option value="3">3 Bintang (⭐⭐⭐)</option>
+                        </select>
+                    </div>
                 </div>
-            </form>
-        </div>
+                <div class="form-group">
+                    <label>Ulasan / Komentar Testimoni</label>
+                    <textarea class="form-control" id="admin-rev-comment" rows="4" placeholder="Tuliskan pengalaman pelanggan..." required></textarea>
+                </div>
+            </div>
+            <div class="admin-modal-footer">
+                <button type="button" class="wp-btn wp-btn-secondary" onclick="closeReviewAdminModal()">Batal</button>
+                <button type="submit" class="wp-btn wp-btn-primary">
+                    <i class="bi bi-save"></i> Simpan Review
+                </button>
+            </div>
+        </form>
     </div>
 
     <!-- ==========================================================================
          MODAL: TAMBAH / EDIT FAQ (FULL CRUD)
          ========================================================================== -->
     <div class="admin-modal" id="modal-faq">
-        <div class="admin-modal-dialog">
+        <form id="form-faq-crud" class="admin-modal-dialog" onsubmit="handleSaveFaq(event)">
+            <input type="hidden" id="faq-edit-id">
             <div class="admin-modal-header">
                 <h3 id="modal-faq-title">Tambah Tanya Jawab FAQ</h3>
-                <button class="modal-close-btn" onclick="closeFaqModal()">&times;</button>
-            </div>
-            <form id="form-faq-crud" onsubmit="handleSaveFaq(event)">
-                <input type="hidden" id="faq-edit-id">
-                <div class="admin-modal-body">
-                    <div class="form-group">
-                        <label>Pertanyaan</label>
-                        <input type="text" class="form-control" id="faq-question" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Jawaban</label>
-                        <textarea class="form-control" id="faq-answer" rows="4" required></textarea>
-                    </div>
-                </div>
-                <div class="admin-modal-footer">
-                    <button type="button" class="wp-btn wp-btn-secondary" onclick="closeFaqModal()">Batal</button>
-                    <button type="submit" class="wp-btn wp-btn-primary">
-                        <i class="bi bi-save"></i> Simpan FAQ
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <button type="submit" class="wp-btn wp-btn-primary wp-btn-sm" style="font-weight: 700; padding: 6px 14px; font-size: 13px;">
+                        <i class="bi bi-save"></i> Simpan
                     </button>
+                    <button type="button" class="modal-close-btn" onclick="closeFaqModal()">&times;</button>
                 </div>
-            </form>
-        </div>
+            </div>
+            <div class="admin-modal-body">
+                <div class="form-group">
+                    <label>Pertanyaan</label>
+                    <input type="text" class="form-control" id="faq-question" required>
+                </div>
+                <div class="form-group">
+                    <label>Jawaban</label>
+                    <textarea class="form-control" id="faq-answer" rows="4" required></textarea>
+                </div>
+            </div>
+            <div class="admin-modal-footer">
+                <button type="button" class="wp-btn wp-btn-secondary" onclick="closeFaqModal()">Batal</button>
+                <button type="submit" class="wp-btn wp-btn-primary">
+                    <i class="bi bi-save"></i> Simpan FAQ
+                </button>
+            </div>
+        </form>
     </div>
 
     <!-- TOAST CONTAINER -->
