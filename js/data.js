@@ -15,8 +15,8 @@ const DEFAULT_SITE_DATA = {
         siteTagline: "Wifi Rumah Terbaik Mulai Rp 180 Ribuan | Jaringan #1 Di Indonesia",
         brandName: "XL SATU",
         coverageArea: "Surabaya, Sidoarjo, Gresik & Seluruh Indonesia",
-        supportedBy: "arif soft 082113842783",
-        supportedPhone: "082113842783",
+        supportedBy: "arif soft 6282113842783",
+        supportedPhone: "6282113842783",
         supportedWhatsapp: "6282113842783",
         copyrightYear: 2026,
         brochureDisplayMode: "grid", // "grid" | "slider" | "carousel"
@@ -30,7 +30,7 @@ const DEFAULT_SITE_DATA = {
     salesRep: {
         name: "ONES",
         role: "Official Sales Representative XL Satu",
-        phone: "085755836988",
+        phone: "6285755836988",
         phoneRaw: "6285755836988",
         messageText: "Halo Mas ONES, saya ingin konsultasi dan daftar pasang XL Satu",
         badge: "Pendaftaran Cukup 5 Menit dengan E-KYC"
@@ -40,9 +40,9 @@ const DEFAULT_SITE_DATA = {
         subtitle: "Layanan bantuan pelanggan dan pengaduan resmi 24 jam setiap hari",
         xlUserPhone: "820",
         xlUserLabel: "Khusus Pengguna Kartu XL (Bebas Pulsa/Tarif Lokal)",
-        nonXlPhone: "0817 0123 442",
+        nonXlPhone: "62817 0123 442",
         nonXlLabel: "Pengguna Non-XL & Telepon Rumah",
-        whatsapp: "0817 0010 820",
+        whatsapp: "62817 0010 820",
         whatsappRaw: "628170010820",
         whatsappLabel: "Chat WhatsApp Resmi Customer Care 24 Jam",
         email: "xlsatucs@xlsmart.co.id",
@@ -373,10 +373,10 @@ const DEFAULT_SITE_DATA = {
     },
     // Kontak WhatsApp Terpadu yang bisa diedit di Admin CMS
     whatsappContacts: {
-        sales: "085755836988",
-        registration: "085755836988",
-        customerCare: "0817 0010 820",
-        supportedDev: "082113842783"
+        sales: "6285755836988",
+        registration: "6285755836988",
+        customerCare: "62817 0010 820",
+        supportedDev: "6282113842783"
     },
     // Ulasan / Testimoni Pelanggan (Review "Kata Mereka")
     reviews: [
