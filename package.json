@@ -16,5 +16,9 @@
     "cms"
   ],
   "author": "arif soft 082113842783",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@supabase/ssr": "^0.12.7",
+    "@supabase/supabase-js": "^2.116.0"
+  }
 }

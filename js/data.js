@@ -438,7 +438,81 @@ const DEFAULT_SITE_DATA = {
 };
 
 // ==========================================================================
-// SQLITE DATABASE STORE (MIGRATED FROM LOCALSTORAGE)
+// SUPABASE CLOUD DATABASE CLIENT (PRIMARY CLOUD DATABASE FOR VERCEL)
+// Connected to: https://yvvpbiwvouqinrbpvfnx.supabase.co
+// Table: site_store
+// Absolutely NO localStorage used
+// ==========================================================================
+const SupabaseClient = {
+    URL: 'https://yvvpbiwvouqinrbpvfnx.supabase.co',
+    KEY: 'sb_publishable_gvn532gjNoaWrJSKZeNHkg_RwOsdngR',
+    _client: null,
+
+    getClient: function() {
+        if (this._client) return this._client;
+        try {
+            if (typeof window !== 'undefined' && window.supabase && window.supabase.createClient) {
+                this._client = window.supabase.createClient(this.URL, this.KEY);
+                return this._client;
+            }
+        } catch (e) {
+            console.warn('[SupabaseClient] Gagal inisialisasi client:', e);
+        }
+        return null;
+    },
+
+    loadData: async function() {
+        try {
+            const client = this.getClient();
+            if (!client) return null;
+            const { data, error } = await client
+                .from('site_store')
+                .select('data')
+                .eq('id', 'main_site_data')
+                .maybeSingle();
+
+            if (error) {
+                console.warn('[SupabaseClient] Info loadData:', error.message);
+                return null;
+            }
+            if (data && data.data) {
+                console.log('[SupabaseClient] ✅ Data berhasil dimuat dari Supabase Cloud');
+                return data.data;
+            }
+            return null;
+        } catch (err) {
+            console.warn('[SupabaseClient] Network error loadData:', err);
+            return null;
+        }
+    },
+
+    saveData: async function(siteData) {
+        try {
+            const client = this.getClient();
+            if (!client) return false;
+            const { error } = await client
+                .from('site_store')
+                .upsert({
+                    id: 'main_site_data',
+                    data: siteData,
+                    updated_at: new Date().toISOString()
+                }, { onConflict: 'id' });
+
+            if (error) {
+                console.warn('[SupabaseClient] Simpan ke Supabase dicek/gagal:', error.message);
+                return false;
+            }
+            console.log('[SupabaseClient] 🚀 Berhasil tersimpan di Supabase Cloud!');
+            return true;
+        } catch (err) {
+            console.warn('[SupabaseClient] Error saveData:', err);
+            return false;
+        }
+    }
+};
+
+// ==========================================================================
+// SQLITE DATABASE STORE (OFFLINE & LOCAL BACKUP)
 // Database Engine: SQLite (xlsatu.db via node:sqlite + IndexedDB Client Backup)
 // Absolutely NO localStorage used
 // ==========================================================================
@@ -525,7 +599,7 @@ const SQLiteClient = {
 const SiteDB = {
     _memoryData: null,
     _isInitialized: false,
-    _engine: 'SQLite (xlsatu.db)',
+    _engine: 'Supabase Cloud Database (PostgreSQL)',
 
     _sanitize: function(parsed) {
         if (!parsed || typeof parsed !== 'object') parsed = {};
@@ -544,7 +618,7 @@ const SiteDB = {
         };
     },
 
-    // Inisialisasi awal membaca dari SQLite Server atau SQLite Client Store
+    // Inisialisasi: Supabase Cloud -> SQLite API -> SQLite Client Store (IndexedDB)
     init: async function() {
         if (this._isInitialized) return;
         this._isInitialized = true;
@@ -557,7 +631,21 @@ const SiteDB = {
             }
         } catch (e) {}
 
-        // Coba load dari SQLite Server API (/api/data)
+        // 1. Prioritas Utama: Load dari Supabase Cloud
+        try {
+            const cloudData = await SupabaseClient.loadData();
+            if (cloudData && (cloudData.packages || cloudData.settings)) {
+                this._memoryData = this._sanitize(cloudData);
+                await SQLiteClient.saveClient(this._memoryData);
+                window.dispatchEvent(new Event('xlsatu_data_updated'));
+                console.log('[SiteDB] ✅ Sinkronisasi aktif dengan Supabase Cloud!');
+                return;
+            }
+        } catch (e) {
+            console.warn('[SiteDB] Supabase cloud belum siap / offline:', e);
+        }
+
+        // 2. Fallback: Load dari SQLite Server API (/api/data)
         try {
             const resp = await fetch('/api/data', { cache: 'no-store' });
             if (resp.ok) {
@@ -567,6 +655,8 @@ const SiteDB = {
                     await SQLiteClient.saveClient(this._memoryData);
                     window.dispatchEvent(new Event('xlsatu_data_updated'));
                     console.log('[SiteDB] Berhasil sinkronisasi dari SQLite server (xlsatu.db)');
+                    // Coba upload ke Supabase jika server punya data terbaru
+                    SupabaseClient.saveData(this._memoryData);
                     return;
                 }
             }
@@ -574,23 +664,24 @@ const SiteDB = {
             // Server offline, lanjut ke SQLite client store
         }
 
-        // Coba load dari SQLite Client Store
+        // 3. Fallback: Load dari SQLite Client Store (IndexedDB)
         const clientData = await SQLiteClient.loadClient();
         if (clientData) {
             this._memoryData = this._sanitize(clientData);
             window.dispatchEvent(new Event('xlsatu_data_updated'));
-            console.log('[SiteDB] Data dimuat dari SQLite client store');
+            console.log('[SiteDB] Data dimuat dari SQLite/IndexedDB client store');
+            // Coba upload ke Supabase jika client punya data tersimpan
+            SupabaseClient.saveData(this._memoryData);
         } else {
             this._memoryData = this._sanitize(DEFAULT_SITE_DATA);
             await SQLiteClient.saveClient(this._memoryData);
+            SupabaseClient.saveData(this._memoryData);
         }
     },
 
     getData: function() {
         if (!this._memoryData) {
-            // Inisialisasi fallback langsung dari DEFAULT_SITE_DATA
             this._memoryData = this._sanitize(DEFAULT_SITE_DATA);
-            // Trigger inisialisasi async
             this.init();
         }
         return JSON.parse(JSON.stringify(this._memoryData));
@@ -600,21 +691,24 @@ const SiteDB = {
         try {
             this._memoryData = this._sanitize(data);
 
-            // 1. Simpan ke SQLite server API (xlsatu.db)
+            // 1. Simpan ke Supabase Cloud (Real-Time Cloud Persistence)
+            SupabaseClient.saveData(this._memoryData);
+
+            // 2. Simpan ke SQLite server API (xlsatu.db) jika ada
             if (typeof fetch !== 'undefined') {
                 fetch('/api/data', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(this._memoryData)
                 }).catch(err => {
-                    console.warn('[SiteDB] Gagal kirim ke server SQLite:', err.message);
+                    // silent fallback
                 });
             }
 
-            // 2. Simpan ke SQLite client store
+            // 3. Simpan ke SQLite client store (IndexedDB)
             SQLiteClient.saveClient(this._memoryData);
 
-            // 3. Emit event update
+            // 4. Emit event update
             window.dispatchEvent(new Event('xlsatu_data_updated'));
             return true;
         } catch (e) {
@@ -626,6 +720,9 @@ const SiteDB = {
     resetToDefault: function() {
         try {
             this._memoryData = this._sanitize(DEFAULT_SITE_DATA);
+
+            // Simpan default ke Supabase Cloud
+            SupabaseClient.saveData(this._memoryData);
 
             // Panggil API reset server jika ada
             if (typeof fetch !== 'undefined') {
