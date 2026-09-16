@@ -233,8 +233,11 @@
 
                         <!-- No HP / WA -->
                         <div class="user-input-group">
-                            <label for="reg-user-phone"><i class="bi bi-whatsapp"></i> No. HP / WhatsApp <span class="required">*</span></label>
-                            <input type="tel" id="reg-user-phone" placeholder="Contoh: 6281234567890" required>
+                            <label for="reg-user-phone"><i class="bi bi-whatsapp"></i> No. HP / WhatsApp (Awalan 62) <span class="required">*</span></label>
+                            <input type="tel" id="reg-user-phone" placeholder="Contoh: 6281234567890" pattern="62[0-9]{8,14}" minlength="10" maxlength="16" required title="Nomor WhatsApp wajib diawali 62 (Contoh: 6281234567890)">
+                            <small id="reg-phone-error" style="color: #ef4444; font-size: 11.5px; display: none; margin-top: 5px; font-weight: 600;">
+                                <i class="bi bi-exclamation-circle-fill"></i> Nomor harus diawali 62 dan minimal 10 digit (Contoh: 6281234567890)
+                            </small>
                         </div>
 
                         <!-- Email -->

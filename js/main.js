@@ -8,15 +8,37 @@ let activeCategoryFilter = 'all';
 document.addEventListener('DOMContentLoaded', () => {
     initLuxuryLandingPage();
 
-    // Auto-format input nomor WhatsApp pendaftaran: jika ketik 0 otomatis berubah jadi 62
+    // Auto-format & Validasi input nomor WhatsApp pendaftaran: wajib diawali 62
     const regPhoneInput = document.getElementById('reg-user-phone');
+    const phoneErrorEl = document.getElementById('reg-phone-error');
     if (regPhoneInput) {
         regPhoneInput.addEventListener('input', function() {
             let val = this.value;
-            if (val.startsWith('0')) {
-                this.value = '62' + val.substring(1);
-            } else if (val.startsWith('+62')) {
-                this.value = '62' + val.substring(3);
+            // Jika diawali +62 atau 0, otomatis konversi ke 62
+            if (val.startsWith('+62')) {
+                val = '62' + val.substring(3);
+                this.value = val;
+            } else if (val.startsWith('0')) {
+                val = '62' + val.substring(1);
+                this.value = val;
+            }
+
+            const digitsOnly = val.replace(/[^0-9]/g, '');
+            if (val.length > 0 && !val.startsWith('62')) {
+                if (phoneErrorEl) {
+                    phoneErrorEl.style.display = 'block';
+                    phoneErrorEl.innerHTML = '<i class="bi bi-exclamation-circle-fill"></i> Nomor wajib diawali 62 (Contoh: 6281234567890)';
+                }
+                this.style.borderColor = '#ef4444';
+            } else if (digitsOnly.length > 0 && digitsOnly.length < 10) {
+                if (phoneErrorEl) {
+                    phoneErrorEl.style.display = 'block';
+                    phoneErrorEl.innerHTML = '<i class="bi bi-exclamation-circle-fill"></i> Nomor terlalu pendek, minimal 10 digit (Contoh: 6281234567890)';
+                }
+                this.style.borderColor = '#f59e0b';
+            } else {
+                if (phoneErrorEl) phoneErrorEl.style.display = 'none';
+                this.style.borderColor = '';
             }
         });
     }
@@ -268,13 +290,34 @@ window.handleRegistrationSubmit = function(e) {
     const address = document.getElementById('reg-user-address')?.value.trim();
     const notes = document.getElementById('reg-user-notes')?.value.trim() || '-';
 
-    // Normalisasi Nomor WhatsApp agar SELALU diawali dengan 62 (bukan 0)
+    // Normalisasi Nomor WhatsApp jika diawali 0 atau +62
     let cleanPhone = rawPhone.replace(/[^0-9]/g, '');
     if (cleanPhone.startsWith('0')) {
         cleanPhone = '62' + cleanPhone.substring(1);
-    } else if (cleanPhone && !cleanPhone.startsWith('62')) {
-        cleanPhone = '62' + cleanPhone;
+    } else if (rawPhone.startsWith('+62')) {
+        cleanPhone = '62' + rawPhone.replace(/[^0-9]/g, '').substring(2);
     }
+
+    // Validasi ketat: nomor WAJIB berawalan 62 dan minimal 10 digit (62 + minimal 8 digit)
+    const phoneInput = document.getElementById('reg-user-phone');
+    const phoneError = document.getElementById('reg-phone-error');
+    const is62Valid = /^62[0-9]{8,14}$/.test(cleanPhone);
+
+    if (!is62Valid) {
+        if (phoneError) {
+            phoneError.style.display = 'block';
+            phoneError.innerHTML = '<i class="bi bi-exclamation-circle-fill"></i> Nomor tidak valid! Harus diawali 62 dan minimal 10 digit (Contoh: 6281234567890)';
+        }
+        if (phoneInput) {
+            phoneInput.focus();
+            phoneInput.style.borderColor = '#ef4444';
+        }
+        alert('Nomor HP/WhatsApp tidak valid!\nNomor wajib diawali dengan 62 dan berupa angka minimal 10 digit (Contoh: 6281234567890).');
+        return;
+    }
+
+    if (phoneError) phoneError.style.display = 'none';
+    if (phoneInput) phoneInput.style.borderColor = '';
     const phone = cleanPhone;
 
     if (!name || !phone || !email || !packageName || !address) {
