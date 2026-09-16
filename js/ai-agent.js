@@ -16,10 +16,10 @@
 
     const DEFAULT_SUGGESTIONS = [
         "🔥 Promo Bayar 4 Bulan",
+        "💬 Chat Mas ONES (WhatsApp)",
         "📶 Wifi Tanpa Kabel 100 Mbps",
         "🚀 Paket Fiber Tercepat",
         "📍 Cek Area Jangkauan",
-        "📝 Cara Daftar 5 Menit",
         "📞 Hubungi Customer Service"
     ];
 
@@ -129,7 +129,7 @@
         return clean;
     }
 
-    // Kotak tombol pengalihan ke Customer Service resmi
+    // Kotak tombol pengalihan ke Customer Service resmi atau WhatsApp Mas ONES
     function renderHandoffButtons(opts = {}) {
         const data = window.SiteDB ? window.SiteDB.getData() : window.DEFAULT_SITE_DATA;
         const cc = data.customerCare || {};
@@ -140,6 +140,22 @@
         const salesWa = formatTo62(waContacts.sales || waContacts.registration || sales.phone || '6285755836988');
         const xlPhone = cc.xlUserPhone || '820';
         const nonXlPhone = formatTo62(cc.nonXlPhone || '628170123442');
+
+        // Jika khusus tombol direct ke Sales Mas ONES
+        if (opts.isSalesOnly) {
+            return `
+                <div class="ai-cs-handoff-box" style="border-color: rgba(37, 211, 102, 0.4); background: rgba(22, 163, 74, 0.12);">
+                    <div class="ai-cs-handoff-title" style="color: #4ade80;">
+                        <i class="bi bi-whatsapp"></i> WhatsApp Resmi Sales Mas ONES:
+                    </div>
+                    <div class="ai-cs-buttons">
+                        <a href="https://wa.me/${salesWa}?text=Halo%20Mas%20ONES,%20saya%20ingin%20konsultasi%20dan%20daftar%20pasang%20XL%20Satu" target="_blank" class="ai-cs-btn wa" style="font-size: 13px; padding: 10px 14px;">
+                            <i class="bi bi-whatsapp"></i> Klik Di Sini untuk Buka WhatsApp Mas ONES (${salesWa})
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
 
         const inquiryText = encodeURIComponent(opts.inquiry ? `Halo CS XL Satu, saya ada pertanyaan/kendala: "${opts.inquiry}"` : 'Halo CS Resmi XL Satu, saya membutuhkan bantuan');
 
@@ -167,8 +183,29 @@
     }
 
     window.handleChipClick = function(chipText) {
-        // Hilangkan icon jika ada
         const clean = chipText.replace(/^[\uD800-\uDBFF\uDC00-\uDFFF\s]+/g, '').trim();
+
+        // JIKA PILIH CHAT MAS ONES -> LANGSUNG BUKA WHATSAPP MAS ONES!
+        if (clean.toLowerCase().includes('ones') || chipText.toLowerCase().includes('ones')) {
+            const data = window.SiteDB ? window.SiteDB.getData() : window.DEFAULT_SITE_DATA;
+            const salesWa = formatTo62(data.whatsappContacts?.sales || data.salesRep?.phone || '6285755836988');
+            const waUrl = `https://wa.me/${salesWa}?text=Halo%20Mas%20ONES,%20saya%20ingin%20konsultasi%20dan%20daftar%20pasang%20XL%20Satu`;
+
+            renderUserMessage("Chat WhatsApp Mas ONES");
+            showTypingIndicator();
+            setTimeout(() => {
+                hideTypingIndicator();
+                renderBotMessage(
+                    `Siap! Sedang membuka WhatsApp resmi Sales **Mas ONES (${salesWa})** di tab baru... 🚀\n\nJika WhatsApp tidak otomatis terbuka, silakan klik tombol hijau di bawah:`,
+                    ["🔥 Promo 4 Bulan", "📶 Info Wifi Tanpa Kabel", "🚀 Paket Fiber Tercepat"],
+                    { isSalesOnly: true }
+                );
+                // Langsung buka WhatsApp Mas ONES
+                window.open(waUrl, '_blank');
+            }, 300);
+            return;
+        }
+
         processUserInput(clean);
     };
 
@@ -293,15 +330,26 @@
             };
         }
 
-        // 8. SALES ONES
-        if (q.includes('sales') || q.includes('ones') || q.includes('mas ones') || q.includes('kontak sales')) {
+        // 8. SALES ONES / CHAT MAS ONES
+        if (q.includes('sales') || q.includes('ones') || q.includes('mas ones') || q.includes('kontak sales') || q.includes('chat mas ones')) {
+            const salesWa = formatTo62(data.whatsappContacts?.sales || data.salesRep?.phone || '6285755836988');
+            const waUrl = `https://wa.me/${salesWa}?text=Halo%20Mas%20ONES,%20saya%20ingin%20konsultasi%20dan%20daftar%20pasang%20XL%20Satu`;
+
+            // Otomatis buka WhatsApp jika pengunjung ingin chat / hubungi
+            if (q.includes('chat') || q.includes('hubungi') || q.includes('wa') || q.includes('whatsapp') || q.includes('langsung')) {
+                setTimeout(() => {
+                    window.open(waUrl, '_blank');
+                }, 500);
+            }
+
             return {
-                text: `👤 **SALES REPRESENTATIVE RESMI XL SATU:**\n\n` +
+                text: `👤 **SALES REPRESENTATIVE RESMI XL SATU (Mas ONES):**\n\n` +
                       `• **Nama**: Mas ONES\n` +
-                      `• **WhatsApp / Telepon**: **6285755836988**\n` +
-                      `• **Layanan**: Pendaftaran Pasang Baru 5 Menit via E-KYC, Cek Jangkauan, Konsultasi Paket.\n\n` +
-                      `Pendaftaran aman, cepat, dan amanah!`,
-                suggestions: ["🔥 Promo 4 Bulan", "📝 Mau Daftar Sekarang"]
+                      `• **WhatsApp**: **${salesWa}**\n` +
+                      `• **Layanan**: Pendaftaran Pasang Baru 5 Menit via E-KYC KTP, Cek Jangkauan, Konsultasi Paket.\n\n` +
+                      `Sedang mengalihkan Anda ke WhatsApp Mas ONES... Silakan klik tombol hijau di bawah jika WhatsApp tidak otomatis terbuka:`,
+                suggestions: ["🔥 Promo 4 Bulan", "📶 Info Wifi Tanpa Kabel", "🚀 Paket Fiber"],
+                csHandoff: { isSalesOnly: true }
             };
         }
 
