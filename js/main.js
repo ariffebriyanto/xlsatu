@@ -748,11 +748,31 @@ window.closeBrochureModal = function() {
     }
 };
 
-// Mobile Nav Toggle
+// Mobile Nav Toggle with Icon Change & Auto-Close on Click
 window.toggleMobileNav = function() {
     const nav = document.getElementById('nav-menu-list');
-    if (nav) nav.classList.toggle('active');
+    const icon = document.querySelector('.mobile-menu-btn i');
+    if (nav) {
+        const isActive = nav.classList.toggle('active');
+        if (icon) {
+            icon.className = isActive ? 'bi bi-x-lg' : 'bi bi-list';
+        }
+    }
 };
+
+// Auto-close mobile nav when a link is clicked
+document.addEventListener('DOMContentLoaded', () => {
+    const nav = document.getElementById('nav-menu-list');
+    const icon = document.querySelector('.mobile-menu-btn i');
+    if (nav) {
+        nav.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                nav.classList.remove('active');
+                if (icon) icon.className = 'bi bi-list';
+            });
+        });
+    }
+});
 
 function escapeHtml(str) {
     if (!str) return '';
